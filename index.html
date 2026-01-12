@@ -1,0 +1,2485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="XwlcPWT360DXaBfaZYmDbDL5-Rz22Mo86-pwqpUIlyg" />
+    <title>Fromage Calculator - Le calculateur qui fait du bien</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧀</text></svg>">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-straight/css/uicons-regular-straight.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <style>
+        :root {
+            --primary: #FF9A3D;
+            --secondary: #FFC93D;
+            --cheese: #FFD166;
+            --meat: #EF476F;
+            --veggie: #06D6A0;
+            --potato: #8B4513;
+            --dark: #26547C;
+            --light: #F8F9FA;
+            --sidebar-width: 280px;
+            --sidebar-collapsed-width: 70px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            min-height: 100vh;
+            display: flex;
+            color: var(--dark);
+            transition: background 0.5s ease;
+        }
+
+        /* Conteneur principal avec mise en page side-by-side */
+        .main-container {
+            display: grid;
+            grid-template-columns: var(--sidebar-width) 1fr;
+            width: 100%;
+            min-height: 100vh;
+            transition: grid-template-columns 0.3s ease;
+        }
+
+        .main-container.sidebar-collapsed {
+            grid-template-columns: var(--sidebar-collapsed-width) 1fr;
+        }
+
+        /* Sidebar pour le menu des recettes */
+        .recipe-sidebar {
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            padding: 2rem 1rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.4rem;
+            transition: opacity 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .recipe-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            flex-grow: 1;
+        }
+
+        .recipe-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .recipe-option:hover,
+        .recipe-option.active {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--dark);
+            transform: translateX(5px);
+        }
+
+        .recipe-option i {
+            font-size: 1.3rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .recipe-text {
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .content-area {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: visible;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            padding: 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .logo-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+        
+        .cheese-logo {
+            font-size: 4rem;
+            animation: melt 3s infinite alternate;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+        
+        .cheese-drip {
+            position: absolute;
+            font-size: 1.5rem;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: drip 3s infinite ease-in-out;
+            opacity: 0.8;
+        }
+        
+        @keyframes melt {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.05) rotate(2deg); }
+            50% { transform: scale(1.1) rotate(-1deg); }
+            75% { transform: scale(1.05) rotate(1deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        @keyframes drip {
+            0% { transform: translateX(-50%) translateY(0); opacity: 0; }
+            50% { transform: translateX(-50%) translateY(8px); opacity: 0.8; }
+            100% { transform: translateX(-50%) translateY(15px); opacity: 0; }
+        }
+        
+        .title-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .input-section {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .input-section h2 {
+            text-align: center;
+            width: 100%;
+        }
+        
+        .people-counters {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .mode-counter {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .mode-counter:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mode-label {
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .people-counter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .counter-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .counter-btn:hover {
+            transform: scale(1.1);
+            background-color: var(--dark);
+        }
+        
+        .people-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+            padding: 0.3rem;
+            background-color: var(--light);
+            border-radius: 8px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .people-display.pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .total-people {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            text-align: center;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .results-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+            padding: 2.5rem;
+            position: relative;
+            z-index: 1;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+        
+        .ingredient-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: visible;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .ingredient-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .ingredient-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+        }
+        
+        .cheese::before {
+            background-color: var(--cheese);
+        }
+        
+        .potato::before {
+            background-color: var(--potato);
+        }
+        
+        .meat::before {
+            background-color: var(--meat);
+        }
+        
+        .veggie::before {
+            background-color: var(--veggie);
+        }
+        
+        .bread::before {
+            background-color: #D4A76A;
+        }
+        
+        .wine::before {
+            background-color: #8B0000;
+        }
+        
+        .cream::before {
+            background-color: #F5F5DC;
+        }
+        
+        .onion::before {
+            background-color: #9370DB;
+        }
+        
+        .bacon::before {
+            background-color: #8B4513;
+        }
+        
+        .comte::before {
+            background-color: #FFD166;
+        }
+        
+        .beaufort::before {
+            background-color: #FFB347;
+        }
+        
+        .emmental::before {
+            background-color: #FFE5B4;
+        }
+        
+        .abondance::before {
+            background-color: #FFCC99;
+        }
+        
+        .ingredient-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+        
+        .ingredient-card.bounce .ingredient-icon {
+            animation: bounce 0.5s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .ingredient-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+        
+        .info-icon {
+            color: var(--dark);
+            cursor: help;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .info-icon:hover {
+            opacity: 1;
+        }
+        
+        .info-icon i {
+            font-size: 1.2rem;
+        }
+        
+        .ingredient-quantity {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark);
+            transition: all 0.3s;
+        }
+        
+        .ingredient-quantity.pop {
+            animation: pop 0.3s ease-in-out;
+        }
+        
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .ingredient-unit {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .customize-section {
+            padding: 1rem 2rem;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-top: 1px dashed #ccc;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .customize-toggle {
+            background: none;
+            border: none;
+            color: var(--dark);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        
+        .customize-toggle:hover {
+            opacity: 1;
+        }
+        
+        .customize-toggle i {
+            font-size: 1.1rem;
+        }
+        
+        .customize-controls {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .customize-controls.show {
+            display: grid;
+        }
+        
+        .customize-control {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .customize-control label {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .customize-control input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .cheese-suggestions {
+            background-color: white;
+            border-top: 2px dashed var(--cheese);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .cheese-toggle {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 1.5rem 2rem;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--dark);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .cheese-toggle:hover {
+            background-color: rgba(255, 209, 102, 0.1);
+        }
+        
+        .cheese-toggle .icon {
+            transition: transform 0.3s;
+        }
+        
+        .cheese-toggle.active .icon {
+            transform: rotate(180deg);
+        }
+        
+        .cheese-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0 2rem;
+        }
+        
+        .cheese-content.show {
+            max-height: 1000px;
+            padding: 0 2rem 2rem;
+        }
+        
+        .cheese-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .cheese-card {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .cheese-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .cheese-icon-small {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .cheese-name {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .cheese-origin {
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .cheese-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .tips-section {
+            padding: 2rem;
+            background-color: white;
+            border-top: 1px solid #eee;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .tips-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            text-align: center;
+        }
+        
+        .tips-list {
+            list-style-type: none;
+        }
+        
+        .tips-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tips-list li:before {
+            content: "🧀";
+            margin-right: 0.5rem;
+        }
+        
+        .cheese-flow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        
+        .cheese-flow.active {
+            opacity: 1;
+            animation: cheeseFlow 1s ease-out;
+        }
+        
+        @keyframes cheeseFlow {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100%); opacity: 0; }
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 240px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 1rem;
+            position: fixed;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            font-weight: normal;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            line-height: 1.4;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: white;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+
+        /* Styles pour le menu mobile */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-toggle:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 90;
+        }
+
+        /* Styles pour le popup mobile */
+        .mobile-popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mobile-popup {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: popupAppear 0.3s ease-out;
+        }
+
+        @keyframes popupAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .popup-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .close-popup {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .close-popup:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .popup-counters {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .popup-counter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .popup-counter-label {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .popup-counter-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .popup-counter-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .popup-counter-btn:hover {
+            transform: scale(1.1);
+            background-color: var(--dark);
+        }
+
+        .popup-counter-display {
+            font-size: 1.3rem;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+            padding: 0.3rem;
+            background-color: var(--light);
+            border-radius: 8px;
+        }
+
+        .funny-phrase {
+            text-align: center;
+            font-style: italic;
+            color: var(--dark);
+            opacity: 0.8;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 154, 61, 0.1);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Styles pour le popup de cookies - Version discrète en bas à droite */
+.cookies-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.cookies-popup {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: popupAppear 0.3s ease-out;
+    text-align: center;
+}
+
+.cookies-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.cookies-message {
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.cookies-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.cookie-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.cookie-btn.accept {
+    background: var(--primary);
+    color: white;
+}
+
+.cookie-btn.reject {
+    background: var(--light);
+    color: var(--dark);
+    border: 2px solid var(--primary);
+}
+
+.cookie-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Version desktop - Popup discret en bas à droite */
+@media (min-width: 769px) {
+    .cookies-popup-overlay {
+        align-items: flex-end;
+        justify-content: flex-end;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3); /* Fond plus léger sur desktop */
+    }
+
+    .cookies-popup {
+        max-width: 380px;
+        margin: 0;
+        animation: slideInFromRight 0.4s ease-out;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .cookies-buttons {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .cookie-btn {
+        flex: 1;
+        max-width: 48%;
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation pour l'apparition depuis la droite */
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
+}
+
+/* Version mobile - Conserver le comportement actuel */
+@media (max-width: 768px) {
+    .cookies-popup-overlay {
+        background: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+    }
+
+    .cookies-popup {
+        animation: popupAppear 0.3s ease-out;
+        max-width: 400px;
+    }
+
+    .cookies-buttons {
+        flex-direction: column;
+    }
+
+    .cookie-btn {
+        max-width: none;
+    }
+}
+        /* Afficher le total cliquable uniquement sur mobile */
+        @media (max-width: 768px) {
+            .people-counters {
+                display: none;
+            }
+            
+            .total-people.mobile-total {
+                display: block;
+                cursor: pointer;
+                transition: all 0.3s;
+                border: 2px solid transparent;
+            }
+            
+            .total-people.mobile-total:active {
+                transform: scale(0.95);
+                border-color: var(--primary);
+            }
+
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .recipe-sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 280px;
+                height: 100%;
+                z-index: 100;
+                transition: left 0.3s ease;
+            }
+
+            .recipe-sidebar.mobile-open {
+                left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .mobile-overlay.active {
+                display: block;
+            }
+
+            .sidebar-toggle {
+                display: none;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .logo-container {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .cheese-logo {
+                font-size: 3rem;
+            }
+            
+            .title-section h1 {
+                font-size: 2rem;
+            }
+            
+            .results-section {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+                padding: 1.5rem;
+                gap: 1.5rem;
+            }
+            
+            .cheese-grid {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+            
+            .customize-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .cheese-toggle {
+                font-size: 1.1rem;
+                padding: 1rem;
+                max-width: 100%;
+            }
+            
+            .customize-section,
+            .tips-section {
+                max-width: 100%;
+            }
+            
+            .tooltip .tooltiptext {
+                width: 200px;
+                font-size: 0.8rem;
+                position: absolute;
+                bottom: 130%;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            
+            .tooltip .tooltiptext::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: var(--dark) transparent transparent transparent;
+            }
+            
+            /* Centrer le texte sur mobile */
+            .input-section h2 {
+                text-align: center;
+            }
+
+            /* Cookies en colonne sur mobile */
+            .cookies-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* Cacher le total cliquable sur desktop */
+        @media (min-width: 769px) {
+            .total-people.mobile-total {
+                display: none;
+            }
+
+            .sidebar-collapsed .sidebar-header h2,
+            .sidebar-collapsed .recipe-text {
+                opacity: 0;
+                visibility: hidden;
+                width: 0;
+                height: 0;
+                overflow: hidden;
+            }
+
+            .sidebar-collapsed .recipe-option {
+                justify-content: center;
+                padding: 0.8rem;
+                height: 60px;
+                width: 60px;
+                border-radius: 15px;
+                margin: 0 auto;
+            }
+
+            .sidebar-collapsed .recipe-option i {
+                margin: 0;
+                font-size: 1.8rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+            }
+
+            .sidebar-collapsed .recipe-list {
+                gap: 1rem;
+                align-items: center;
+            }
+
+            .results-section {
+                max-width: 650px;
+                gap: 2.5rem;
+            }
+            
+            .cheese-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                max-width: 600px;
+            }
+            
+            .customize-controls {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .cheese-toggle,
+            .customize-section,
+            .tips-section {
+                max-width: 600px;
+            }
+            
+            .tooltip .tooltiptext {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            
+            /* Centrer le texte sur desktop */
+            .input-section h2 {
+                text-align: center;
+            }
+
+            /* Cookies en ligne sur desktop */
+            .cookies-buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .cookie-btn {
+                flex: 1;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bouton menu mobile -->
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
+    <div class="mobile-overlay" id="mobile-overlay"></div>
+
+    <div class="main-container" id="main-container">
+        <!-- Sidebar pour le menu des recettes -->
+        <nav class="recipe-sidebar" id="recipe-sidebar">
+            <div class="sidebar-header">
+                <h2>Choisir une recette</h2>
+                <button class="sidebar-toggle" id="sidebar-toggle">
+                    <i class="fi fi-rs-apps"></i>
+                </button>
+            </div>
+            <div class="recipe-list">
+                <a href="#" class="recipe-option active" data-recipe="raclette">
+                    <i class="fi fi-rs-cheese"></i>
+                    <span class="recipe-text">Raclette</span>
+                </a>
+                <a href="#" class="recipe-option" data-recipe="fondue">
+                    <i class="fi fi-rr-fondue-pot"></i>
+                    <span class="recipe-text">Fondue</span>
+                </a>
+                <a href="#" class="recipe-option" data-recipe="tartiflette">
+                    <i class="fi fi-rs-soup"></i>
+                    <span class="recipe-text">Tartiflette</span>
+                </a>
+                <a href="#" class="recipe-option" data-recipe="croziflette">
+                    <i class="fi fi-rs-pan-food"></i>
+                    <span class="recipe-text">Croziflette</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Contenu principal -->
+        <div class="content-area">
+            <div class="container">
+                <header>
+                    <div class="header-content">
+                        <div class="logo-container">
+                            <div class="cheese-logo">🧀</div>
+                        </div>
+                        <div class="title-section">
+                            <h1 id="page-title">Raclette Calculator</h1>
+                            <p class="subtitle" id="page-subtitle">Le calculateur ultime pour un moment de plaisir!</p>
+                        </div>
+                    </div>
+                </header>
+                
+                <section class="input-section">
+                    <h2 id="input-title">Combien de personnes pour la raclette ?</h2>
+                    
+                    <div class="people-counters">
+                        <div class="mode-counter" id="counter-eco">
+                            <span class="mode-label">😒 Éco</span>
+                            <div class="people-counter">
+                                <button class="counter-btn decrease" data-mode="eco">-</button>
+                                <div class="people-display" id="people-count-eco">0</div>
+                                <button class="counter-btn increase" data-mode="eco">+</button>
+                            </div>
+                        </div>
+                        <div class="mode-counter" id="counter-normal">
+                            <span class="mode-label">😋 Normal</span>
+                            <div class="people-counter">
+                                <button class="counter-btn decrease" data-mode="normal">-</button>
+                                <div class="people-display" id="people-count-normal">4</div>
+                                <button class="counter-btn increase" data-mode="normal">+</button>
+                            </div>
+                        </div>
+                        <div class="mode-counter" id="counter-gourmand">
+                            <span class="mode-label">🤤 Gourmand</span>
+                            <div class="people-counter">
+                                <button class="counter-btn decrease" data-mode="gourmand">-</button>
+                                <div class="people-display" id="people-count-gourmand">0</div>
+                                <button class="counter-btn increase" data-mode="gourmand">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="total-people mobile-total">
+                        Total: <span id="total-people-count">5</span> personnes
+                    </div>
+                    <div class="total-people desktop-total">
+                        Total: <span id="desktop-total-people-count">5</span> personnes
+                    </div>
+                    <div class="funny-phrase" id="main-funny-phrase">
+                        <!-- La phrase humoristique sera insérée ici par JavaScript -->
+                    </div>
+                </section>
+                
+                <section class="results-section" id="results-section">
+                    <!-- Les cartes d'ingrédients seront générées dynamiquement -->
+                </section>
+                
+                <section class="customize-section">
+                    <button class="customize-toggle" id="customize-toggle">
+                        <i class="fi fi-rs-settings"></i>
+                        Personnaliser les quantités par personne (mode Normal)
+                    </button>
+                    <div class="customize-controls" id="customize-controls">
+                        <!-- Les contrôles de personnalisation seront générés dynamiquement -->
+                    </div>
+                </section>
+                
+                <section class="cheese-suggestions" id="cheese-section">
+                    <!-- Le contenu des suggestions de fromages sera généré dynamiquement -->
+                </section>
+                
+                <section class="tips-section" id="tips-section">
+                    <!-- Les conseils seront générés dynamiquement -->
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup pour mobile -->
+    <div class="mobile-popup-overlay" id="mobile-popup-overlay">
+        <div class="mobile-popup">
+            <div class="popup-header">
+                <h3 class="popup-title">Nombre de personnes</h3>
+                <button class="close-popup" id="close-popup">✕</button>
+            </div>
+            
+            <div class="popup-counters">
+                <div class="popup-counter">
+                    <span class="popup-counter-label">😒 Éco</span>
+                    <div class="popup-counter-controls">
+                        <button class="popup-counter-btn decrease" data-mode="eco">-</button>
+                        <div class="popup-counter-display" id="popup-people-count-eco">0</div>
+                        <button class="popup-counter-btn increase" data-mode="eco">+</button>
+                    </div>
+                </div>
+                
+                <div class="popup-counter">
+                    <span class="popup-counter-label">😋 Normal</span>
+                    <div class="popup-counter-controls">
+                        <button class="popup-counter-btn decrease" data-mode="normal">-</button>
+                        <div class="popup-counter-display" id="popup-people-count-normal">4</div>
+                        <button class="popup-counter-btn increase" data-mode="normal">+</button>
+                    </div>
+                </div>
+                
+                <div class="popup-counter">
+                    <span class="popup-counter-label">🤤 Gourmand</span>
+                    <div class="popup-counter-controls">
+                        <button class="popup-counter-btn decrease" data-mode="gourmand">-</button>
+                        <div class="popup-counter-display" id="popup-people-count-gourmand">0</div>
+                        <button class="popup-counter-btn increase" data-mode="gourmand">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="funny-phrase" id="popup-funny-phrase">
+                <!-- La phrase humoristique sera insérée ici par JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup pour les cookies -->
+    <div class="cookies-popup-overlay" id="cookies-popup-overlay">
+        <div class="cookies-popup">
+            <h2 class="cookies-title">
+                <span>🍪</span> Cookies fromagers
+            </h2>
+            <p class="cookies-message">
+                Nous utilisons des cookies pour améliorer votre expérience fromagère. 
+                Acceptez-vous ces délices croustillants ?
+            </p>
+            <div class="cookies-buttons">
+                <button class="cookie-btn accept" id="accept-cookies">
+                    <span>🍪</span> J'adore prendre un cookie au dessert !
+                </button>
+                <button class="cookie-btn reject" id="reject-cookies">
+                    <span>🧀</span> On est venu ici pour parler fromage !
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Définition des recettes avec leurs données spécifiques
+            const recipes = {
+                raclette: {
+                    title: "Raclette Calculator",
+                    subtitle: "Le calculateur ultime pour un moment de plaisir!",
+                    inputTitle: "Combien de personnes pour la raclette ?",
+                    emoji: "🧀",
+                    colors: {
+                        primary: "#FF9A3D",
+                        secondary: "#FFC93D",
+                        dark: "#26547C"
+                    },
+                    ingredients: [
+                        {
+                            name: "Fromage à raclette",
+                            icon: "🧀",
+                            category: "cheese",
+                            baseValue: 250,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 200-300g par personne. Les vrais fondues peuvent aller jusqu'à 350g!"
+                        },
+                        {
+                            name: "Pommes de terre",
+                            icon: "🥔",
+                            category: "potato",
+                            baseValue: 200,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 150-250g par personne. Privilégiez les pommes de terre à chair ferme."
+                        },
+                        {
+                            name: "Charcuterie",
+                            icon: "🥓",
+                            category: "meat",
+                            baseValue: 150,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 100-200g par personne. Variez les plaisirs avec jambon, coppa et saucisson."
+                        },
+                        {
+                            name: "Légumes divers",
+                            icon: "🥗",
+                            category: "veggie",
+                            baseValue: 75,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 50-100g par personne. Cornichons, oignons, salade verte pour équilibrer."
+                        }
+                    ],
+                    cheeseSection: {
+                        title: "🧀 La vache! Je m'en fais tout un fromage! 🧀",
+                        cheeses: [
+                            {
+                                icon: "🇨🇭",
+                                name: "Raclette Valaisanne",
+                                desc: "Suisse - Valais. Le classique suisse à pâte demi-dure, crémeux et fruité, parfait pour fondre"
+                            },
+                            {
+                                icon: "🇮🇹",
+                                name: "Fontina",
+                                desc: "Italie - Vallée d'Aoste. Fromage à pâte semi-cuite, doux et noisetté, fondant exceptionnel"
+                            },
+                            {
+                                icon: "🇫🇷",
+                                name: "Morbier",
+                                desc: "France - Franche-Comté. Reconnaissable à sa ligne de cendre, fondant et légèrement fruité"
+                            },
+                            {
+                                icon: "🇳🇱",
+                                name: "Gouda affiné",
+                                desc: "Pays-Bas - Hollande. Version affinée du célèbre fromage hollandais, caramelisé et fondant"
+                            },
+                            {
+                                icon: "🇪🇸",
+                                name: "Mahón",
+                                desc: "Espagne - Minorque. Fromage au lait de vache, légèrement salé et acidulé, fond crémeux"
+                            },
+                            {
+                                icon: "🇦🇹",
+                                name: "Bergkäse",
+                                desc: "Autriche - Tyrol. 'Fromage de montagne' alpin, aromatique et excellent pour la fonte"
+                            }
+                        ]
+                    },
+                    tips: [
+                        "Choisissez un fromage à raclette de qualité",
+                        "Faites cuire les pommes de terre à la vapeur pour qu'elles restent fermes",
+                        "Variez les charcuteries (jambon, coppa, saucisson)",
+                        "N'oubliez pas les cornichons pour équilibrer les saveurs",
+                        "Prévoyez un vin blanc sec pour accompagner",
+                        "Servez une salade verte en accompagnement pour digérer"
+                    ]
+                },
+                fondue: {
+                    title: "Fondue Calculator",
+                    subtitle: "Le calculateur qui va te faire fondre!",
+                    inputTitle: "Combien de personnes pour la fondue ?",
+                    emoji: "🫕",
+                    colors: {
+                        primary: "#8B0000",
+                        secondary: "#D4A76A",
+                        dark: "#5D4037"
+                    },
+                    ingredients: [
+                        {
+                            name: "Comté",
+                            icon: "🧀",
+                            category: "comte",
+                            baseValue: 100,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 80-120g par personne. Fromage à pâte pressée cuite, aromatique et fondant."
+                        },
+                        {
+                            name: "Beaufort",
+                            icon: "🧀",
+                            category: "beaufort",
+                            baseValue: 60,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 50-70g par personne. Fromage à pâte pressée cuite, doux et fruité."
+                        },
+                        {
+                            name: "Emmental",
+                            icon: "🧀",
+                            category: "emmental",
+                            baseValue: 40,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 30-50g par personne. Fromage à pâte pressée cuite, doux avec ses fameux trous."
+                        },
+                        {
+                            name: "Pain",
+                            icon: "🍞",
+                            category: "bread",
+                            baseValue: 150,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 120-180g par personne. Pain de campagne ou baguette rassie, coupé en cubes."
+                        },
+                        {
+                            name: "Vin blanc",
+                            icon: "🍷",
+                            category: "wine",
+                            baseValue: 100,
+                            unit: "ml",
+                            tooltip: "Recommandation : 80-120ml par personne. Vin blanc sec pour la préparation de la fondue."
+                        },
+                        {
+                            name: "Accompagnements",
+                            icon: "🥗",
+                            category: "veggie",
+                            baseValue: 100,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 80-120g par personne. Charcuterie, cornichons et oignons pour équilibrer."
+                        }
+                    ],
+                    cheeseSection: {
+                        title: "🧀 Les meilleurs fromages pour votre fondue 🧀",
+                        cheeses: [
+                            {
+                                icon: "🇫🇷",
+                                name: "Comté",
+                                desc: "France - Franche-Comté. Fromage à pâte pressée cuite, aromatique et fondant à souhait"
+                            },
+                            {
+                                icon: "🇫🇷",
+                                name: "Beaufort",
+                                desc: "France - Savoie. Fromage de vache à pâte pressée cuite, doux et fruité, parfait pour fondue"
+                            },
+                            {
+                                icon: "🇨🇭",
+                                name: "Gruyère",
+                                desc: "Suisse - Fribourg. Fromage à pâte pressée cuite, corsé et légèrement salé"
+                            },
+                            {
+                                icon: "🇫🇷",
+                                name: "Emmental",
+                                desc: "France - Savoie. Fromage à pâte pressée cuite, doux avec ses fameux trous"
+                            },
+                            {
+                                icon: "🇫🇷",
+                                name: "Abondance",
+                                desc: "France - Haute-Savoie. Fromage de vache à pâte pressée semi-cuite, fruité et crémeux"
+                            },
+                            {
+                                icon: "🇨🇭",
+                                name: "Appenzeller",
+                                desc: "Suisse - Appenzell. Fromage aromatisé aux herbes, donnant un goût unique à la fondue"
+                            }
+                        ]
+                    },
+                    tips: [
+                        "Utilisez un caquelon en terre cuite pour une fondue traditionnelle",
+                        "Frottez le caquelon avec une gousse d'ail avant de préparer la fondue",
+                        "Mélangez les fromages avec de la maïzena pour éviter qu'ils ne filent",
+                        "Remuez constamment en forme de 8 pendant la cuisson",
+                        "Servez avec du vin blanc de Savoie ou un thé pour accompagner",
+                        "Ne buvez pas d'eau pendant le repas, cela peut causer des problèmes de digestion"
+                    ]
+                },
+                tartiflette: {
+                    title: "Tartiflette Calculator",
+                    subtitle: "Le calculateur qui te met la patate!",
+                    inputTitle: "Combien de personnes pour la tartiflette ?",
+                    emoji: "❤️‍🔥",
+                    colors: {
+                        primary: "#26547C",
+                        secondary: "#FFD166",
+                        dark: "#1A365D"
+                    },
+                    ingredients: [
+                        {
+                            name: "Reblochon",
+                            icon: "🧀",
+                            category: "cheese",
+                            baseValue: 125,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 100-150g par personne. Un reblochon entier (500g) pour 4-5 personnes."
+                        },
+                        {
+                            name: "Pommes de terre",
+                            icon: "🥔",
+                            category: "potato",
+                            baseValue: 250,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 200-300g par personne. Pommes de terre à chair ferme type Charlotte ou Belle de Fontenay."
+                        },
+                        {
+                            name: "Lardons",
+                            icon: "🥓",
+                            category: "bacon",
+                            baseValue: 100,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 80-120g par personne. Lardons fumés de préférence pour plus de saveur."
+                        },
+                        {
+                            name: "Oignons",
+                            icon: "🧅",
+                            category: "onion",
+                            baseValue: 50,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 40-60g par personne. Oignons jaunes ou blancs émincés finement."
+                        },
+                        {
+                            name: "Crème fraîche",
+                            icon: "🥛",
+                            category: "cream",
+                            baseValue: 50,
+                            unit: "ml",
+                            tooltip: "Recommandation : 40-60ml par personne. Crème fraîche épaisse pour plus d'onctuosité."
+                        },
+                        {
+                            name: "Vin blanc",
+                            icon: "🍷",
+                            category: "wine",
+                            baseValue: 50,
+                            unit: "ml",
+                            tooltip: "Recommandation : 40-60ml par personne. Vin blanc sec pour déglacer les oignons et lardons."
+                        }
+                    ],
+                    cheeseSection: {
+                        title: "🧀 Le reblochon, star de la tartiflette 🧀",
+                        cheeses: [
+                            {
+                                icon: "🇫🇷",
+                                name: "Reblochon Fermier",
+                                desc: "France - Haute-Savoie. Reblochon au lait cru, fabriqué en alpage, saveur authentique et crémeuse"
+                            },
+                            {
+                                icon: "🇫🇷",
+                                name: "Reblochon Fruitier",
+                                desc: "France - Savoie. Reblochon au lait cru, fabriqué en vallée, texture fondante et goût délicat"
+                            }
+                        ]
+                    },
+                    tips: [
+                        "Utilisez un reblochon AOP pour une tartiflette authentique",
+                        "Coupez le reblochon en deux dans l'épaisseur et posez-le croûte vers le haut",
+                        "Faites préalablement cuire les pommes de terre à l'eau ou à la vapeur",
+                        "Faites revenir les lardons et oignons ensemble pour plus de saveur",
+                        "Nappez de crème fraîche avant d'ajouter le fromage",
+                        "Enfournez à 200°C pendant 20-25 minutes jusqu'à ce que le fromage soit bien gratiné"
+                    ]
+                },
+                croziflette: {
+                    title: "Croziflette Calculator",
+                    subtitle: "Additionne les crozets, soustrais la faim.",
+                    inputTitle: "Combien de personnes pour la croziflette ?",
+                    emoji: "🫠",
+                    colors: {
+                        primary: "#06D6A0",
+                        secondary: "#EF476F",
+                        dark: "#118AB2"
+                    },
+                    ingredients: [
+                        {
+                            name: "Reblochon",
+                            icon: "🧀",
+                            category: "cheese",
+                            baseValue: 125,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 100-150g par personne. Même fromage que pour la tartiflette traditionnelle."
+                        },
+                        {
+                            name: "Crozet",
+                            icon: "🍝",
+                            category: "potato",
+                            baseValue: 100,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 80-120g par personne. Petites pâtes carrées savoyardes à base de sarrasin ou de blé."
+                        },
+                        {
+                            name: "Lardons",
+                            icon: "🥓",
+                            category: "bacon",
+                            baseValue: 80,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 70-100g par personne. Lardons fumés pour un goût plus prononcé."
+                        },
+                        {
+                            name: "Oignons",
+                            icon: "🧅",
+                            category: "onion",
+                            baseValue: 50,
+                            unit: "grammes",
+                            tooltip: "Recommandation : 40-60g par personne. Oignons jaunes émincés finement."
+                        },
+                        {
+                            name: "Crème fraîche",
+                            icon: "🥛",
+                            category: "cream",
+                            baseValue: 60,
+                            unit: "ml",
+                            tooltip: "Recommandation : 50-70ml par personne. Crème fraîche épaisse pour lier l'ensemble."
+                        },
+                        {
+                            name: "Vin blanc",
+                            icon: "🍷",
+                            category: "wine",
+                            baseValue: 30,
+                            unit: "ml",
+                            tooltip: "Recommandation : 25-40ml par personne. Vin blanc sec pour déglacer la poêlée."
+                        }
+                    ],
+                    cheeseSection: {
+                        title: "🧀 Fromages pour votre croziflette 🧀",
+                        cheeses: [
+                            {
+                                icon: "🇫🇷",
+                                name: "Reblochon Fermier",
+                                desc: "France - Haute-Savoie. Reblochon au lait cru, saveur authentique et crémeuse pour une croziflette traditionnelle"
+                            },
+                            {
+                                icon: "🇫🇷",
+                                name: "Tomme de Savoie",
+                                desc: "France - Savoie. Alternative intéressante au reblochon, plus douce et moins forte"
+                            },
+                            {
+                                icon: "🇫🇷",
+                                name: "Beaufort",
+                                desc: "France - Savoie. Fromage à pâte pressée cuite, fondant et fruité, donne une texture crémeuse"
+                            },
+                            {
+                                icon: "🇫🇷",
+                                name: "Raclette de Savoie",
+                                desc: "France - Savoie. Excellent pour la croziflette, fond parfaitement et a un goût délicat"
+                            },
+                            {
+                                icon: "🇫🇷",
+                                name: "Abondance",
+                                desc: "France - Haute-Savoie. Fromage fruité avec une légère amertume, originale en croziflette"
+                            },
+                            {
+                                icon: "🇫🇷",
+                                name: "Emmental de Savoie",
+                                desc: "France - Savoie. Plus doux que le reblochon, parfait pour ceux qui préfèrent un goût moins prononcé"
+                            }
+                        ]
+                    },
+                    tips: [
+                        "Faites cuire les crozets al dente pour qu'ils ne deviennent pas trop mous à la cuisson",
+                        "Égouttez bien les crozets après cuisson pour éviter qu'ils ne rendent trop d'eau",
+                        "Faites revenir les lardons et oignons jusqu'à ce qu'ils soient bien colorés",
+                        "Mélangez délicatement les crozets avec la préparation pour ne pas les casser",
+                        "Répartissez la préparation dans un plat à gratin et recouvrez de fromage",
+                        "Enfournez à 180°C pendant 15-20 minutes jusqu'à ce que le fromage soit bien gratiné"
+                    ]
+                }
+            };
+
+            // Éléments DOM
+            const peopleCountEco = document.getElementById('people-count-eco');
+            const peopleCountNormal = document.getElementById('people-count-normal');
+            const peopleCountGourmand = document.getElementById('people-count-gourmand');
+            const totalPeopleCount = document.getElementById('total-people-count');
+            const desktopTotalPeopleCount = document.getElementById('desktop-total-people-count');
+            
+            const pageTitle = document.getElementById('page-title');
+            const pageSubtitle = document.getElementById('page-subtitle');
+            const inputTitle = document.getElementById('input-title');
+            const resultsSection = document.getElementById('results-section');
+            const customizeControls = document.getElementById('customize-controls');
+            const cheeseSection = document.getElementById('cheese-section');
+            const tipsSection = document.getElementById('tips-section');
+            const cheeseLogo = document.querySelector('.cheese-logo');
+            
+            // Éléments du popup mobile
+            const mobilePopupOverlay = document.getElementById('mobile-popup-overlay');
+            const closePopup = document.getElementById('close-popup');
+            const mobileTotal = document.querySelector('.total-people.mobile-total');
+            const mainFunnyPhrase = document.getElementById('main-funny-phrase');
+            
+            // Éléments des compteurs dans le popup
+            const popupPeopleCountEco = document.getElementById('popup-people-count-eco');
+            const popupPeopleCountNormal = document.getElementById('popup-people-count-normal');
+            const popupPeopleCountGourmand = document.getElementById('popup-people-count-gourmand');
+            const popupFunnyPhrase = document.getElementById('popup-funny-phrase');
+
+            // Éléments du popup cookies
+            const cookiesPopupOverlay = document.getElementById('cookies-popup-overlay');
+            const acceptCookies = document.getElementById('accept-cookies');
+            const rejectCookies = document.getElementById('reject-cookies');
+
+            // Variables globales
+            let counts = {
+                eco: 0,
+                normal: 4,
+                gourmand: 0
+            };
+            
+            let currentRecipe = 'raclette';
+            
+            // Multiplicateurs pour chaque mode (basés sur le mode Normal)
+            const modeMultipliers = {
+                eco: 0.8,      // 80% des quantités normales
+                normal: 1.0,   // 100% des quantités normales
+                gourmand: 1.2  // 120% des quantités normales
+            };
+
+            // Phrases humoristiques selon le nombre total de personnes
+            const funnyPhrases = {
+                0: "Personne ? Vraiment ? Même pas un petit bout de fromage ? 😢",
+                1: "Dîner en solo ? Profites-en pour te faire PLAISIR ! 🧀",
+                2: "Parfait pour un dîner en amoureux... ou entre amoureux du fromage ! 💑",
+                3: "Petite soirée tranquille entre amis... et fromage ! 👌",
+                4: "Ça commence à être une belle tablée ! 🎉",
+                5: "Une main ne suffit plus pour compter ! 🖐️",
+                6: "On dirait une fête ! Préparez les estomacs ! 🎊",
+                7: "Sept nains et un fromage géant ? 🍄",
+                8: "Ça va fondre de partout ! Préparez les éponges ! 🧽",
+                9: "Presque une équipe de foot... de fromage ! ⚽",
+                10: "Nombre rond, fromage carré, tout va bien ! 🔟",
+                11: "Onze, c'est le nombre du fromage qui dépasse ! 🏔️",
+                12: "Une douzaine de gourmands, le fromage va souffrir ! 😱",
+                13: "Trece, chiffre chanceux pour les amoureux du fromage ! 🍀",
+                14: "Quatorze personnes ? Le fromage a appelé des renforts ! 📞",
+                15: "Quinze ! On approche du record du monde ! 🏆",
+                16: "Seize personnes, seize portions... ou plus ! 😉",
+                17: "Dix-sept, l'âge du fromage qui sent bon ! 🎂",
+                18: "Majeur... pour le fromage ! 👍",
+                19: "Dix-neuf, bientôt la vingtaine de fromageux ! 🎯",
+                20: "VINGT ! On va avoir besoin d'une meule ! 🧀"
+            };
+            
+            // Fonctions
+            
+            function getCurrentValues() {
+                const recipe = recipes[currentRecipe];
+                const values = {};
+                
+                // Pour chaque ingrédient, calculer la quantité totale en cumulant les modes
+                recipe.ingredients.forEach(ingredient => {
+                    let total = 0;
+                    
+                    // Ajouter la quantité pour chaque mode
+                    for (const mode in counts) {
+                        total += ingredient.baseValue * counts[mode] * modeMultipliers[mode];
+                    }
+                    
+                    values[ingredient.category] = total;
+                });
+                
+                return values;
+            }
+            
+            function updateCustomizeFields() {
+                const recipe = recipes[currentRecipe];
+                
+                // Vider les contrôles existants
+                customizeControls.innerHTML = '';
+                
+                // Créer les nouveaux contrôles
+                recipe.ingredients.forEach(ingredient => {
+                    const controlDiv = document.createElement('div');
+                    controlDiv.className = 'customize-control';
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `${ingredient.category}-per-person`;
+                    label.textContent = `${ingredient.name} (${ingredient.unit}/personne - Normal)`;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.id = `${ingredient.category}-per-person`;
+                    input.min = '10';
+                    input.max = '500';
+                    input.value = Math.round(ingredient.baseValue);
+                    
+                    input.addEventListener('change', updatePerPersonValues);
+                    
+                    controlDiv.appendChild(label);
+                    controlDiv.appendChild(input);
+                    customizeControls.appendChild(controlDiv);
+                });
+            }
+            
+            function animateValue(element, oldValue, newValue, duration = 500) {
+                const start = Date.now();
+                const change = newValue - oldValue;
+                
+                function update() {
+                    const now = Date.now();
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Easing function for smooth animation
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    
+                    const currentValue = Math.round(oldValue + change * easeOut);
+                    element.textContent = currentValue;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    }
+                }
+                
+                update();
+            }
+            
+            function triggerAnimation(element, animationClass) {
+                element.classList.add(animationClass);
+                setTimeout(() => {
+                    element.classList.remove(animationClass);
+                }, 500);
+            }
+            
+            function updateQuantities() {
+                const currentValues = getCurrentValues();
+                const recipe = recipes[currentRecipe];
+                
+                // Mettre à jour chaque ingrédient
+                recipe.ingredients.forEach(ingredient => {
+                    const quantityElement = document.getElementById(`${ingredient.category}-quantity`);
+                    if (quantityElement) {
+                        const oldValue = parseInt(quantityElement.textContent) || 0;
+                        const newValue = Math.round(currentValues[ingredient.category]);
+                        
+                        // Animation des valeurs avec compteur
+                        animateValue(quantityElement, oldValue, newValue);
+                        
+                        // Animation de la carte
+                        const card = document.getElementById(`${ingredient.category}-card`);
+                        if (card) {
+                            triggerAnimation(card, 'bounce');
+                        }
+                    }
+                });
+                
+                // Animation spéciale pour le fromage
+                const cheeseFlow = document.getElementById('cheese-flow');
+                if (cheeseFlow) {
+                    cheeseFlow.classList.add('active');
+                    setTimeout(() => {
+                        cheeseFlow.classList.remove('active');
+                    }, 1000);
+                }
+            }
+            
+            // Fonction pour obtenir une phrase humoristique
+            function getFunnyPhrase(total) {
+                if (total === 0) return funnyPhrases[0];
+                if (total <= 20) return funnyPhrases[total];
+                return "Plus de 20 personnes ? Vous allez vider la fromagerie ! 🚀";
+            }
+
+            // Fonction pour mettre à jour les phrases humoristiques
+            function updateFunnyPhrases() {
+                const total = counts.eco + counts.normal + counts.gourmand;
+                const phrase = getFunnyPhrase(total);
+                
+                // Mettre à jour la phrase dans le popup
+                if (popupFunnyPhrase) {
+                    popupFunnyPhrase.textContent = phrase;
+                }
+                
+                // Mettre à jour la phrase sous le total principal
+                if (mainFunnyPhrase) {
+                    mainFunnyPhrase.textContent = phrase;
+                }
+            }
+
+            function updatePeopleCount(mode, newCount) {
+                counts[mode] = newCount;
+                
+                // Mettre à jour l'affichage du compteur principal
+                const displayElement = document.getElementById(`people-count-${mode}`);
+                if (displayElement) {
+                    triggerAnimation(displayElement, 'pulse');
+                    displayElement.textContent = newCount;
+                }
+                
+                // Mettre à jour l'affichage dans le popup
+                updatePopupCounter(mode, newCount);
+                
+                // Mettre à jour le total
+                const total = counts.eco + counts.normal + counts.gourmand;
+                totalPeopleCount.textContent = total;
+                desktopTotalPeopleCount.textContent = total;
+                
+                // Mettre à jour les phrases humoristiques
+                updateFunnyPhrases();
+                
+                // Recalculer les quantités
+                updateQuantities();
+            }
+            
+            function updatePopupCounter(mode, newCount) {
+                const displayElement = document.getElementById(`popup-people-count-${mode}`);
+                if (displayElement) {
+                    displayElement.textContent = newCount;
+                }
+            }
+            
+            function updatePerPersonValues() {
+                // Quand l'utilisateur modifie manuellement, on met à jour les valeurs de base
+                const recipe = recipes[currentRecipe];
+                
+                recipe.ingredients.forEach(ingredient => {
+                    const input = document.getElementById(`${ingredient.category}-per-person`);
+                    if (input) {
+                        ingredient.baseValue = parseInt(input.value);
+                    }
+                });
+                
+                // Recalculer les quantités
+                updateQuantities();
+            }
+            
+            function createIngredientCards() {
+                // Vider la section des résultats
+                resultsSection.innerHTML = '';
+                
+                const recipe = recipes[currentRecipe];
+                
+                // Créer les cartes d'ingrédients
+                recipe.ingredients.forEach(ingredient => {
+                    const card = document.createElement('div');
+                    card.className = `ingredient-card ${ingredient.category}`;
+                    card.id = `${ingredient.category}-card`;
+                    
+                    // Ajouter l'animation de fromage qui coule uniquement pour le fromage
+                    if (ingredient.category.includes('cheese') || 
+                        ingredient.category === 'comte' || 
+                        ingredient.category === 'beaufort' || 
+                        ingredient.category === 'emmental') {
+                        const cheeseFlow = document.createElement('div');
+                        cheeseFlow.className = 'cheese-flow';
+                        cheeseFlow.id = 'cheese-flow';
+                        cheeseFlow.textContent = '🧀';
+                        card.appendChild(cheeseFlow);
+                    }
+                    
+                    const icon = document.createElement('div');
+                    icon.className = 'ingredient-icon';
+                    icon.textContent = ingredient.icon;
+                    
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'ingredient-name';
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = ingredient.name;
+                    
+                    const tooltipDiv = document.createElement('div');
+                    tooltipDiv.className = 'tooltip';
+                    
+                    const infoIcon = document.createElement('span');
+                    infoIcon.className = 'info-icon';
+                    infoIcon.innerHTML = '<i class="fi fi-rs-info"></i>';
+                    
+                    const tooltipText = document.createElement('span');
+                    tooltipText.className = 'tooltiptext';
+                    tooltipText.textContent = ingredient.tooltip;
+                    
+                    tooltipDiv.appendChild(infoIcon);
+                    tooltipDiv.appendChild(tooltipText);
+                    
+                    nameDiv.appendChild(nameSpan);
+                    nameDiv.appendChild(tooltipDiv);
+                    
+                    const quantity = document.createElement('div');
+                    quantity.className = 'ingredient-quantity';
+                    quantity.id = `${ingredient.category}-quantity`;
+                    quantity.textContent = '0'; // Initialiser à 0 pour éviter NaN
+                    
+                    const unit = document.createElement('div');
+                    unit.className = 'ingredient-unit';
+                    unit.textContent = ingredient.unit;
+                    
+                    card.appendChild(icon);
+                    card.appendChild(nameDiv);
+                    card.appendChild(quantity);
+                    card.appendChild(unit);
+                    
+                    resultsSection.appendChild(card);
+                });
+            }
+            
+            function createCheeseSection() {
+                // Vider la section des fromages
+                cheeseSection.innerHTML = '';
+                
+                const recipe = recipes[currentRecipe];
+                
+                if (!recipe.cheeseSection) return;
+                
+                const cheeseToggle = document.createElement('button');
+                cheeseToggle.className = 'cheese-toggle';
+                cheeseToggle.id = 'cheese-toggle';
+                
+                const toggleText = document.createElement('span');
+                toggleText.textContent = recipe.cheeseSection.title;
+                
+                const toggleIcon = document.createElement('span');
+                toggleIcon.className = 'icon';
+                toggleIcon.textContent = '▼';
+                
+                cheeseToggle.appendChild(toggleText);
+                cheeseToggle.appendChild(toggleIcon);
+                
+                const cheeseContent = document.createElement('div');
+                cheeseContent.className = 'cheese-content';
+                cheeseContent.id = 'cheese-content';
+                
+                const cheeseGrid = document.createElement('div');
+                cheeseGrid.className = 'cheese-grid';
+                
+                // Créer les cartes de fromages
+                recipe.cheeseSection.cheeses.forEach(cheese => {
+                    const cheeseCard = document.createElement('div');
+                    cheeseCard.className = 'cheese-card';
+                    
+                    const cheeseIcon = document.createElement('div');
+                    cheeseIcon.className = 'cheese-icon-small';
+                    cheeseIcon.textContent = cheese.icon;
+                    
+                    const cheeseName = document.createElement('div');
+                    cheeseName.className = 'cheese-name';
+                    
+                    const cheeseOrigin = document.createElement('span');
+                    cheeseOrigin.className = 'cheese-origin';
+                    
+                    const cheeseNameText = document.createElement('span');
+                    cheeseNameText.textContent = cheese.name;
+                    
+                    cheeseName.appendChild(cheeseOrigin);
+                    cheeseName.appendChild(cheeseNameText);
+                    
+                    const cheeseDesc = document.createElement('div');
+                    cheeseDesc.className = 'cheese-desc';
+                    cheeseDesc.textContent = cheese.desc;
+                    
+                    cheeseCard.appendChild(cheeseIcon);
+                    cheeseCard.appendChild(cheeseName);
+                    cheeseCard.appendChild(cheeseDesc);
+                    
+                    cheeseGrid.appendChild(cheeseCard);
+                });
+                
+                cheeseContent.appendChild(cheeseGrid);
+                cheeseSection.appendChild(cheeseToggle);
+                cheeseSection.appendChild(cheeseContent);
+                
+                // Ajouter l'événement pour le toggle
+                cheeseToggle.addEventListener('click', function() {
+                    cheeseContent.classList.toggle('show');
+                    cheeseToggle.classList.toggle('active');
+                });
+            }
+            
+            function createTipsSection() {
+                // Vider la section des conseils
+                tipsSection.innerHTML = '';
+                
+                const recipe = recipes[currentRecipe];
+                
+                const tipsTitle = document.createElement('h3');
+                tipsTitle.className = 'tips-title';
+                tipsTitle.textContent = 'Conseils pour une ' + currentRecipe + ' réussie';
+                
+                const tipsList = document.createElement('ul');
+                tipsList.className = 'tips-list';
+                
+                // Créer la liste des conseils
+                recipe.tips.forEach(tip => {
+                    const tipItem = document.createElement('li');
+                    tipItem.textContent = tip;
+                    tipsList.appendChild(tipItem);
+                });
+                
+                tipsSection.appendChild(tipsTitle);
+                tipsSection.appendChild(tipsList);
+            }
+            
+            function applyTheme(recipeName) {
+                const recipe = recipes[recipeName];
+                const root = document.documentElement;
+                
+                // Appliquer les couleurs de la recette
+                root.style.setProperty('--primary', recipe.colors.primary);
+                root.style.setProperty('--secondary', recipe.colors.secondary);
+                root.style.setProperty('--dark', recipe.colors.dark);
+                
+                // Mettre à jour le logo
+                if (cheeseLogo) {
+                    cheeseLogo.textContent = recipe.emoji;
+                }
+            }
+            
+            function setRecipe(recipeName) {
+                currentRecipe = recipeName;
+                const recipe = recipes[recipeName];
+                
+                // Appliquer le thème de couleurs
+                applyTheme(recipeName);
+                
+                // Mettre à jour les titres
+                pageTitle.textContent = recipe.title;
+                pageSubtitle.textContent = recipe.subtitle;
+                inputTitle.textContent = recipe.inputTitle;
+                
+                // Recréer les sections
+                createIngredientCards();
+                createCheeseSection();
+                createTipsSection();
+                
+                // Mettre à jour les contrôles de personnalisation
+                updateCustomizeFields();
+                
+                // Recalculer les quantités
+                updateQuantities();
+                
+                // Mettre à jour les phrases humoristiques
+                updateFunnyPhrases();
+            }
+            
+            // Fonction pour ouvrir le popup mobile
+            function openMobilePopup() {
+                // Mettre à jour les valeurs dans le popup
+                popupPeopleCountEco.textContent = counts.eco;
+                popupPeopleCountNormal.textContent = counts.normal;
+                popupPeopleCountGourmand.textContent = counts.gourmand;
+                
+                // Mettre à jour la phrase humoristique
+                updateFunnyPhrases();
+                
+                // Afficher le popup
+                mobilePopupOverlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Fonction pour fermer le popup mobile
+            function closeMobilePopup() {
+                mobilePopupOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+
+            // Fonction pour fermer le popup cookies
+            function closeCookiesPopup() {
+                cookiesPopupOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+                
+                // Stocker le choix de l'utilisateur pour ne plus afficher le popup
+                localStorage.setItem('cookiesAccepted', 'true');
+            }
+
+// Fonction pour afficher le popup cookies
+function showCookiesPopup() {
+    // Vérifier si l'utilisateur a déjà fait un choix
+    if (!localStorage.getItem('cookiesAccepted')) {
+        // Afficher le popup après un court délai
+        setTimeout(() => {
+            cookiesPopupOverlay.style.display = "flex";
+            document.body.style.overflow = "hidden";
+        }, window.innerWidth <= 768 ? 1000 : 500); // Délai plus court sur desktop
+    }
+}
+
+
+            // Gestion du clic sur les options de recette
+            const recipeOptions = document.querySelectorAll('.recipe-option');
+            recipeOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Retire la classe active de toutes les options
+                    recipeOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // Ajoute la classe active à l'option cliquée
+                    this.classList.add('active');
+                    
+                    // Change de recette
+                    const recipeName = this.getAttribute('data-recipe');
+                    setRecipe(recipeName);
+                    
+                    // Sur mobile, fermer le menu après sélection
+                    if (window.innerWidth <= 768) {
+                        closeMobileMenu();
+                    }
+                });
+            });
+            
+            // Gestion des compteurs de personnes
+            const counterButtons = document.querySelectorAll('.counter-btn');
+            counterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const mode = this.getAttribute('data-mode');
+                    const isIncrease = this.classList.contains('increase');
+                    
+                    if (isIncrease && counts[mode] < 20) {
+                        updatePeopleCount(mode, counts[mode] + 1);
+                    } else if (!isIncrease && counts[mode] > 0) {
+                        updatePeopleCount(mode, counts[mode] - 1);
+                    }
+                });
+            });
+            
+            // Gestion du toggle de la sidebar sur PC
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const mainContainer = document.getElementById('main-container');
+            
+            sidebarToggle.addEventListener('click', function() {
+                mainContainer.classList.toggle('sidebar-collapsed');
+                
+                // Changer l'icône selon l'état
+                const icon = this.querySelector('i');
+                if (mainContainer.classList.contains('sidebar-collapsed')) {
+                    icon.className = 'fi fi-rs-apps';
+                } else {
+                    icon.className = 'fi fi-rs-apps';
+                }
+            });
+            
+            // Gestion du menu mobile
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileOverlay = document.getElementById('mobile-overlay');
+            const recipeSidebar = document.getElementById('recipe-sidebar');
+            
+            function openMobileMenu() {
+                recipeSidebar.classList.add('mobile-open');
+                mobileOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeMobileMenu() {
+                recipeSidebar.classList.remove('mobile-open');
+                mobileOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            mobileMenuToggle.addEventListener('click', openMobileMenu);
+            mobileOverlay.addEventListener('click', closeMobileMenu);
+            
+            // Gestion de la personnalisation
+            const customizeToggle = document.getElementById('customize-toggle');
+            customizeToggle.addEventListener('click', function() {
+                customizeControls.classList.toggle('show');
+            });
+            
+            // Événements pour le popup mobile
+            if (mobileTotal) {
+                mobileTotal.addEventListener('click', openMobilePopup);
+            }
+            
+            if (closePopup) {
+                closePopup.addEventListener('click', closeMobilePopup);
+            }
+            
+            // Fermer le popup en cliquant en dehors
+            if (mobilePopupOverlay) {
+                mobilePopupOverlay.addEventListener('click', function(e) {
+                    if (e.target === mobilePopupOverlay) {
+                        closeMobilePopup();
+                    }
+                });
+            }
+
+            // Gérer les boutons dans le popup
+            const popupCounterButtons = document.querySelectorAll('.popup-counter-btn');
+            popupCounterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const mode = this.getAttribute('data-mode');
+                    const isIncrease = this.classList.contains('increase');
+                    
+                    if (isIncrease && counts[mode] < 20) {
+                        updatePeopleCount(mode, counts[mode] + 1);
+                    } else if (!isIncrease && counts[mode] > 0) {
+                        updatePeopleCount(mode, counts[mode] - 1);
+                    }
+                });
+            });
+
+            // Gestion des cookies
+            if (acceptCookies) {
+                acceptCookies.addEventListener('click', function() {
+                    alert("🍪 Super ! On va se régaler avec ces cookies !");
+                    closeCookiesPopup();
+                });
+            }
+
+            if (rejectCookies) {
+                rejectCookies.addEventListener('click', function() {
+                    alert("🧀 D'accord, on reste concentrés sur le fromage alors !");
+                    closeCookiesPopup();
+                });
+            }
+
+            // Configurer le total mobile et desktop
+            function setupTotals() {
+                const totalPeopleElement = document.querySelector('.total-people');
+                if (totalPeopleElement && window.innerWidth <= 768) {
+                    totalPeopleElement.classList.add('mobile-total');
+                }
+                
+                // Afficher/masquer les totaux selon l'appareil
+                const desktopTotal = document.querySelector('.desktop-total');
+                const mobileTotal = document.querySelector('.mobile-total');
+                
+                if (window.innerWidth <= 768) {
+                    if (desktopTotal) desktopTotal.style.display = 'none';
+                    if (mobileTotal) mobileTotal.style.display = 'block';
+                } else {
+                    if (desktopTotal) desktopTotal.style.display = 'block';
+                    if (mobileTotal) mobileTotal.style.display = 'none';
+                }
+            }
+
+            // Initialisation
+            setRecipe('raclette');
+            updateQuantities();
+            
+            // Initialiser les compteurs
+            updatePeopleCount('eco', counts.eco);
+            updatePeopleCount('normal', counts.normal);
+            updatePeopleCount('gourmand', counts.gourmand);
+            
+            // Configurer les totaux
+            setupTotals();
+            
+            // Afficher le popup cookies
+            showCookiesPopup();
+            
+            // Reconfigurer lors du redimensionnement
+            window.addEventListener('resize', function() {
+                setupTotals();
+            });
+        });
+    </script>
+</body>
+</html>
