@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="XwlcPWT360DXaBfaZYmDbDL5-Rz22Mo86-pwqpUIlyg" />
     <title>Fromage Calculator - Le calculateur qui fait du bien</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧀</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="images/cheese-raclette.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
@@ -185,12 +185,17 @@
             box-shadow: 1px 1px 0 var(--ink);
         }
 
-        .recipe-option i {
-            font-size: 1.3rem;
-            min-width: 24px;
-            text-align: center;
-            line-height: 1;
-            display: flex;
+        .recipe-icon {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            margin: -0.35rem 0;
+            transition: transform 0.3s var(--bounce);
+        }
+        
+        .recipe-option:hover .recipe-icon,
+        .recipe-option.active .recipe-icon {
+            transform: rotate(-8deg) scale(1.12);
         }
 
         .recipe-text {
@@ -265,8 +270,8 @@
         }
 
         .cheese-logo {
-            font-size: 3.4rem;
-            line-height: 1;
+            width: 72px;
+            height: 72px;
             animation: wobble 3s infinite ease-in-out;
         }
 
@@ -359,8 +364,13 @@
         }
 
         .mode-emoji {
-            font-size: 2rem;
-            line-height: 1;
+            width: 56px;
+            height: 56px;
+            transition: transform 0.3s var(--bounce);
+        }
+        
+        .mode-counter:hover .mode-emoji {
+            transform: rotate(-8deg) scale(1.1);
         }
 
         .people-counter {
@@ -512,7 +522,7 @@
         .meat { --accent: var(--meat); }
         .veggie { --accent: var(--veggie); }
         .bread { --accent: #D4A76A; }
-        .wine { --accent: #C0392B; }
+        .wine { --accent: #E9D98B; }
         .cream { --accent: #F5F0DC; }
         .onion { --accent: #B39DDB; }
         .bacon { --accent: #E07A5F; }
@@ -522,20 +532,25 @@
         .abondance { --accent: #FFCC99; }
 
         .ingredient-icon {
-            width: 76px;
-            height: 76px;
+            width: 84px;
+            height: 84px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.6rem;
-            line-height: 1;
             margin-bottom: 0.75rem;
+            /* Teinte claire : l'illustration ressort mieux que sur la couleur pleine */
             background: var(--accent);
+            background: color-mix(in srgb, var(--accent) 40%, white);
             border: var(--line) solid var(--ink);
             border-radius: 50%;
             box-shadow: var(--shadow-sm);
         }
 
+        .ingredient-img {
+            width: 74px;
+            height: 74px;
+        }
+        
         .ingredient-card.bounce .ingredient-icon {
             animation: bounce 0.5s var(--bounce);
         }
@@ -798,8 +813,8 @@
         }
 
         .cheese-icon-small {
-            font-size: 2rem;
-            line-height: 1;
+            width: 44px;
+            height: 44px;
             margin-bottom: 0.5rem;
         }
 
@@ -863,15 +878,11 @@
         }
 
         .tips-list li:before {
-            content: "🧀";
+            content: "";
             flex-shrink: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            background: var(--secondary);
+            width: 34px;
+            height: 34px;
+            background: var(--secondary) url("images/cheese-raclette.svg") center / 26px no-repeat;
             border: 2px solid var(--ink);
             border-radius: 50%;
         }
@@ -893,6 +904,13 @@
             border-radius: 19px;
         }
 
+        .cheese-flow-img {
+            display: block;
+            width: 40px;
+            height: 40px;
+            margin: 0.5rem auto 0;
+        }
+        
         .cheese-flow.active {
             opacity: 1;
             animation: cheeseFlow 1s ease-out;
@@ -1194,7 +1212,8 @@
         }
 
         .popup-counter-label .mode-emoji {
-            font-size: 1.6rem;
+            width: 40px;
+            height: 40px;
         }
 
         .popup-counter-controls {
@@ -1419,7 +1438,8 @@
             }
 
             .cheese-logo {
-                font-size: 2.6rem;
+                width: 58px;
+                height: 58px;
             }
 
             .title-section h1 {
@@ -1455,10 +1475,14 @@
             }
 
             .ingredient-icon {
+                width: 66px;
+                height: 66px;
+                margin-bottom: 0.55rem;
+            }
+            
+            .ingredient-img {
                 width: 58px;
                 height: 58px;
-                font-size: 1.9rem;
-                margin-bottom: 0.55rem;
             }
 
             .ingredient-name {
@@ -1548,16 +1572,16 @@
 
             .sidebar-collapsed .recipe-option {
                 justify-content: center;
-                padding: 0.8rem;
+                padding: 0.4rem;
                 height: 56px;
                 width: 56px;
                 margin: 0 auto;
             }
 
-            .sidebar-collapsed .recipe-option i {
+            .sidebar-collapsed .recipe-icon {
                 margin: 0;
-                font-size: 1.5rem;
-                justify-content: center;
+                width: 40px;
+                height: 40px;
             }
 
             .sidebar-collapsed .recipe-list {
@@ -1590,19 +1614,19 @@
             </div>
             <div class="recipe-list">
                 <a href="#raclette" class="recipe-option active" data-recipe="raclette" aria-current="page">
-                    <i class="fi fi-rs-cheese"></i>
+                    <img class="recipe-icon" src="images/recipe-raclette.svg" alt="" width="36" height="36">
                     <span class="recipe-text">Raclette</span>
                 </a>
                 <a href="#fondue" class="recipe-option" data-recipe="fondue">
-                    <i class="fi fi-rr-fondue-pot"></i>
+                    <img class="recipe-icon" src="images/recipe-fondue.svg" alt="" width="36" height="36">
                     <span class="recipe-text">Fondue</span>
                 </a>
                 <a href="#tartiflette" class="recipe-option" data-recipe="tartiflette">
-                    <i class="fi fi-rs-soup"></i>
+                    <img class="recipe-icon" src="images/recipe-tartiflette.svg" alt="" width="36" height="36">
                     <span class="recipe-text">Tartiflette</span>
                 </a>
                 <a href="#croziflette" class="recipe-option" data-recipe="croziflette">
-                    <i class="fi fi-rs-pan-food"></i>
+                    <img class="recipe-icon" src="images/recipe-croziflette.svg" alt="" width="36" height="36">
                     <span class="recipe-text">Croziflette</span>
                 </a>
             </div>
@@ -1614,7 +1638,7 @@
                 <header>
                     <div class="header-content">
                         <div class="logo-container">
-                            <div class="cheese-logo">🧀</div>
+                            <img class="cheese-logo" src="images/recipe-raclette.svg" alt="" width="72" height="72">
                         </div>
                         <div class="title-section">
                             <h1 id="page-title">Raclette Calculator</h1>
@@ -1628,7 +1652,7 @@
                     
                     <div class="people-counters">
                         <div class="mode-counter" id="counter-eco">
-                            <span class="mode-label"><span class="mode-emoji" aria-hidden="true">😒</span> Éco</span>
+                            <span class="mode-label"><img class="mode-emoji" src="images/mode-eco.svg" alt="" width="56" height="56"> Éco</span>
                             <div class="people-counter">
                                 <button class="counter-btn decrease" data-mode="eco" aria-label="Retirer une personne (Éco)">−</button>
                                 <div class="people-display" id="people-count-eco">0</div>
@@ -1636,7 +1660,7 @@
                             </div>
                         </div>
                         <div class="mode-counter" id="counter-normal">
-                            <span class="mode-label"><span class="mode-emoji" aria-hidden="true">😋</span> Normal</span>
+                            <span class="mode-label"><img class="mode-emoji" src="images/mode-normal.svg" alt="" width="56" height="56"> Normal</span>
                             <div class="people-counter">
                                 <button class="counter-btn decrease" data-mode="normal" aria-label="Retirer une personne (Normal)">−</button>
                                 <div class="people-display" id="people-count-normal">4</div>
@@ -1644,7 +1668,7 @@
                             </div>
                         </div>
                         <div class="mode-counter" id="counter-gourmand">
-                            <span class="mode-label"><span class="mode-emoji" aria-hidden="true">🤤</span> Gourmand</span>
+                            <span class="mode-label"><img class="mode-emoji" src="images/mode-gourmand.svg" alt="" width="56" height="56"> Gourmand</span>
                             <div class="people-counter">
                                 <button class="counter-btn decrease" data-mode="gourmand" aria-label="Retirer une personne (Gourmand)">−</button>
                                 <div class="people-display" id="people-count-gourmand">0</div>
@@ -1708,7 +1732,7 @@
             
             <div class="popup-counters">
                 <div class="popup-counter">
-                    <span class="popup-counter-label"><span class="mode-emoji" aria-hidden="true">😒</span> Éco</span>
+                    <span class="popup-counter-label"><img class="mode-emoji" src="images/mode-eco.svg" alt="" width="56" height="56"> Éco</span>
                     <div class="popup-counter-controls">
                         <button class="popup-counter-btn decrease" data-mode="eco" aria-label="Retirer une personne (Éco)">−</button>
                         <div class="popup-counter-display" id="popup-people-count-eco">0</div>
@@ -1717,7 +1741,7 @@
                 </div>
                 
                 <div class="popup-counter">
-                    <span class="popup-counter-label"><span class="mode-emoji" aria-hidden="true">😋</span> Normal</span>
+                    <span class="popup-counter-label"><img class="mode-emoji" src="images/mode-normal.svg" alt="" width="56" height="56"> Normal</span>
                     <div class="popup-counter-controls">
                         <button class="popup-counter-btn decrease" data-mode="normal" aria-label="Retirer une personne (Normal)">−</button>
                         <div class="popup-counter-display" id="popup-people-count-normal">4</div>
@@ -1726,7 +1750,7 @@
                 </div>
                 
                 <div class="popup-counter">
-                    <span class="popup-counter-label"><span class="mode-emoji" aria-hidden="true">🤤</span> Gourmand</span>
+                    <span class="popup-counter-label"><img class="mode-emoji" src="images/mode-gourmand.svg" alt="" width="56" height="56"> Gourmand</span>
                     <div class="popup-counter-controls">
                         <button class="popup-counter-btn decrease" data-mode="gourmand" aria-label="Retirer une personne (Gourmand)">−</button>
                         <div class="popup-counter-display" id="popup-people-count-gourmand">0</div>
@@ -1773,6 +1797,7 @@
                     subtitle: "Le calculateur ultime pour un moment de plaisir!",
                     inputTitle: "Combien de personnes pour la raclette ?",
                     emoji: "🧀",
+                    image: "images/recipe-raclette.svg",
                     colors: {
                         primary: "#FF9A3D",
                         secondary: "#FFC93D",
@@ -1781,7 +1806,7 @@
                     ingredients: [
                         {
                             name: "Fromage à raclette",
-                            icon: "🧀",
+                            image: "images/cheese-raclette.svg",
                             category: "cheese",
                             baseValue: 250,
                             unit: "grammes",
@@ -1789,7 +1814,7 @@
                         },
                         {
                             name: "Pommes de terre",
-                            icon: "🥔",
+                            image: "images/potato.svg",
                             category: "potato",
                             baseValue: 200,
                             unit: "grammes",
@@ -1797,7 +1822,7 @@
                         },
                         {
                             name: "Charcuterie",
-                            icon: "🥓",
+                            image: "images/charcuterie.svg",
                             category: "meat",
                             baseValue: 150,
                             unit: "grammes",
@@ -1805,7 +1830,7 @@
                         },
                         {
                             name: "Légumes divers",
-                            icon: "🥗",
+                            image: "images/salad.svg",
                             category: "veggie",
                             baseValue: 75,
                             unit: "grammes",
@@ -1816,32 +1841,32 @@
                         title: "🧀 La vache! Je m'en fais tout un fromage! 🧀",
                         cheeses: [
                             {
-                                icon: "🇨🇭",
+                                country: "ch",
                                 name: "Raclette Valaisanne",
                                 desc: "Suisse - Valais. Le classique suisse à pâte demi-dure, crémeux et fruité, parfait pour fondre"
                             },
                             {
-                                icon: "🇮🇹",
+                                country: "it",
                                 name: "Fontina",
                                 desc: "Italie - Vallée d'Aoste. Fromage à pâte semi-cuite, doux et noisetté, fondant exceptionnel"
                             },
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Morbier",
                                 desc: "France - Franche-Comté. Reconnaissable à sa ligne de cendre, fondant et légèrement fruité"
                             },
                             {
-                                icon: "🇳🇱",
+                                country: "nl",
                                 name: "Gouda affiné",
                                 desc: "Pays-Bas - Hollande. Version affinée du célèbre fromage hollandais, caramélisé et fondant"
                             },
                             {
-                                icon: "🇪🇸",
+                                country: "es",
                                 name: "Mahón",
                                 desc: "Espagne - Minorque. Fromage au lait de vache, légèrement salé et acidulé, fond crémeux"
                             },
                             {
-                                icon: "🇦🇹",
+                                country: "at",
                                 name: "Bergkäse",
                                 desc: "Autriche - Tyrol. 'Fromage de montagne' alpin, aromatique et excellent pour la fonte"
                             }
@@ -1861,6 +1886,7 @@
                     subtitle: "Le calculateur qui va te faire fondre!",
                     inputTitle: "Combien de personnes pour la fondue ?",
                     emoji: "🫕",
+                    image: "images/recipe-fondue.svg",
                     colors: {
                         primary: "#8B0000",
                         secondary: "#D4A76A",
@@ -1869,7 +1895,7 @@
                     ingredients: [
                         {
                             name: "Comté",
-                            icon: "🧀",
+                            image: "images/cheese-comte.svg",
                             category: "comte",
                             baseValue: 100,
                             unit: "grammes",
@@ -1877,7 +1903,7 @@
                         },
                         {
                             name: "Beaufort",
-                            icon: "🧀",
+                            image: "images/cheese-beaufort.svg",
                             category: "beaufort",
                             baseValue: 60,
                             unit: "grammes",
@@ -1885,7 +1911,7 @@
                         },
                         {
                             name: "Emmental",
-                            icon: "🧀",
+                            image: "images/cheese-emmental.svg",
                             category: "emmental",
                             baseValue: 40,
                             unit: "grammes",
@@ -1893,7 +1919,7 @@
                         },
                         {
                             name: "Pain",
-                            icon: "🍞",
+                            image: "images/bread.svg",
                             category: "bread",
                             baseValue: 150,
                             unit: "grammes",
@@ -1901,7 +1927,7 @@
                         },
                         {
                             name: "Vin blanc",
-                            icon: "🍷",
+                            image: "images/wine.svg",
                             category: "wine",
                             baseValue: 100,
                             unit: "ml",
@@ -1910,7 +1936,7 @@
                         },
                         {
                             name: "Accompagnements",
-                            icon: "🥗",
+                            image: "images/pickle.svg",
                             category: "veggie",
                             baseValue: 100,
                             unit: "grammes",
@@ -1921,32 +1947,32 @@
                         title: "🧀 Les meilleurs fromages pour votre fondue 🧀",
                         cheeses: [
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Comté",
                                 desc: "France - Franche-Comté. Fromage à pâte pressée cuite, aromatique et fondant à souhait"
                             },
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Beaufort",
                                 desc: "France - Savoie. Fromage de vache à pâte pressée cuite, doux et fruité, parfait pour fondue"
                             },
                             {
-                                icon: "🇨🇭",
+                                country: "ch",
                                 name: "Gruyère",
                                 desc: "Suisse - Fribourg. Fromage à pâte pressée cuite, corsé et légèrement salé"
                             },
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Emmental",
                                 desc: "France - Savoie. Fromage à pâte pressée cuite, doux avec ses fameux trous"
                             },
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Abondance",
                                 desc: "France - Haute-Savoie. Fromage de vache à pâte pressée semi-cuite, fruité et crémeux"
                             },
                             {
-                                icon: "🇨🇭",
+                                country: "ch",
                                 name: "Appenzeller",
                                 desc: "Suisse - Appenzell. Fromage aromatisé aux herbes, donnant un goût unique à la fondue"
                             }
@@ -1966,6 +1992,7 @@
                     subtitle: "Le calculateur qui te met la patate!",
                     inputTitle: "Combien de personnes pour la tartiflette ?",
                     emoji: "❤️‍🔥",
+                    image: "images/recipe-tartiflette.svg",
                     colors: {
                         primary: "#26547C",
                         secondary: "#FFD166",
@@ -1974,7 +2001,7 @@
                     ingredients: [
                         {
                             name: "Reblochon",
-                            icon: "🧀",
+                            image: "images/reblochon.svg",
                             category: "cheese",
                             baseValue: 125,
                             unit: "grammes",
@@ -1983,7 +2010,7 @@
                         },
                         {
                             name: "Pommes de terre",
-                            icon: "🥔",
+                            image: "images/potato.svg",
                             category: "potato",
                             baseValue: 250,
                             unit: "grammes",
@@ -1991,7 +2018,7 @@
                         },
                         {
                             name: "Lardons",
-                            icon: "🥓",
+                            image: "images/lardons.svg",
                             category: "bacon",
                             baseValue: 100,
                             unit: "grammes",
@@ -2000,7 +2027,7 @@
                         },
                         {
                             name: "Oignons",
-                            icon: "🧅",
+                            image: "images/onion.svg",
                             category: "onion",
                             baseValue: 50,
                             unit: "grammes",
@@ -2008,7 +2035,7 @@
                         },
                         {
                             name: "Crème fraîche",
-                            icon: "🥛",
+                            image: "images/cream.svg",
                             category: "cream",
                             baseValue: 50,
                             unit: "ml",
@@ -2017,7 +2044,7 @@
                         },
                         {
                             name: "Vin blanc",
-                            icon: "🍷",
+                            image: "images/wine.svg",
                             category: "wine",
                             baseValue: 50,
                             unit: "ml",
@@ -2029,12 +2056,12 @@
                         title: "🧀 Le reblochon, star de la tartiflette 🧀",
                         cheeses: [
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Reblochon Fermier",
                                 desc: "France - Haute-Savoie. Reblochon au lait cru, fabriqué en alpage, saveur authentique et crémeuse"
                             },
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Reblochon Fruitier",
                                 desc: "France - Savoie. Reblochon au lait cru, fabriqué en vallée, texture fondante et goût délicat"
                             }
@@ -2054,6 +2081,7 @@
                     subtitle: "Additionne les crozets, soustrais la faim.",
                     inputTitle: "Combien de personnes pour la croziflette ?",
                     emoji: "🫠",
+                    image: "images/recipe-croziflette.svg",
                     colors: {
                         primary: "#06D6A0",
                         secondary: "#EF476F",
@@ -2062,7 +2090,7 @@
                     ingredients: [
                         {
                             name: "Reblochon",
-                            icon: "🧀",
+                            image: "images/reblochon.svg",
                             category: "cheese",
                             baseValue: 125,
                             unit: "grammes",
@@ -2071,7 +2099,7 @@
                         },
                         {
                             name: "Crozet",
-                            icon: "🍝",
+                            image: "images/crozets.svg",
                             category: "potato",
                             baseValue: 100,
                             unit: "grammes",
@@ -2080,7 +2108,7 @@
                         },
                         {
                             name: "Lardons",
-                            icon: "🥓",
+                            image: "images/lardons.svg",
                             category: "bacon",
                             baseValue: 80,
                             unit: "grammes",
@@ -2089,7 +2117,7 @@
                         },
                         {
                             name: "Oignons",
-                            icon: "🧅",
+                            image: "images/onion.svg",
                             category: "onion",
                             baseValue: 50,
                             unit: "grammes",
@@ -2097,7 +2125,7 @@
                         },
                         {
                             name: "Crème fraîche",
-                            icon: "🥛",
+                            image: "images/cream.svg",
                             category: "cream",
                             baseValue: 60,
                             unit: "ml",
@@ -2106,7 +2134,7 @@
                         },
                         {
                             name: "Vin blanc",
-                            icon: "🍷",
+                            image: "images/wine.svg",
                             category: "wine",
                             baseValue: 30,
                             unit: "ml",
@@ -2118,32 +2146,32 @@
                         title: "🧀 Fromages pour votre croziflette 🧀",
                         cheeses: [
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Reblochon Fermier",
                                 desc: "France - Haute-Savoie. Reblochon au lait cru, saveur authentique et crémeuse pour une croziflette traditionnelle"
                             },
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Tomme de Savoie",
                                 desc: "France - Savoie. Alternative intéressante au reblochon, plus douce et moins forte"
                             },
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Beaufort",
                                 desc: "France - Savoie. Fromage à pâte pressée cuite, fondant et fruité, donne une texture crémeuse"
                             },
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Raclette de Savoie",
                                 desc: "France - Savoie. Excellent pour la croziflette, fond parfaitement et a un goût délicat"
                             },
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Abondance",
                                 desc: "France - Haute-Savoie. Fromage fruité avec une légère amertume, originale en croziflette"
                             },
                             {
-                                icon: "🇫🇷",
+                                country: "fr",
                                 name: "Emmental de Savoie",
                                 desc: "France - Savoie. Plus doux que le reblochon, parfait pour ceux qui préfèrent un goût moins prononcé"
                             }
@@ -2245,6 +2273,17 @@
                 20: "VINGT ! On va avoir besoin d'une meule ! 🧀"
             };
 
+            function createIllustration(src, className, size) {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = className;
+                img.alt = '';
+                img.width = size;
+                img.height = size;
+                img.decoding = 'async';
+                return img;
+            }
+            
             // Mémoriser les quantités recommandées pour pouvoir les restaurer
             for (const name in recipes) {
                 recipes[name].ingredients.forEach(ingredient => {
@@ -2623,7 +2662,7 @@
                         const cheeseFlow = document.createElement('div');
                         cheeseFlow.className = 'cheese-flow';
                         cheeseFlow.id = 'cheese-flow';
-                        cheeseFlow.textContent = '🧀';
+                        cheeseFlow.appendChild(createIllustration('images/cheese-raclette.svg', 'cheese-flow-img', 40));
                         cheeseFlow.setAttribute('aria-hidden', 'true');
                         card.appendChild(cheeseFlow);
                         hasCheeseFlow = true;
@@ -2631,8 +2670,7 @@
 
                     const icon = document.createElement('div');
                     icon.className = 'ingredient-icon';
-                    icon.textContent = ingredient.icon;
-                    icon.setAttribute('aria-hidden', 'true');
+                    icon.appendChild(createIllustration(ingredient.image, 'ingredient-img', 64));
 
                     const nameDiv = document.createElement('div');
                     nameDiv.className = 'ingredient-name';
@@ -2740,9 +2778,7 @@
                     const cheeseCard = document.createElement('div');
                     cheeseCard.className = 'cheese-card';
 
-                    const cheeseIcon = document.createElement('div');
-                    cheeseIcon.className = 'cheese-icon-small';
-                    cheeseIcon.textContent = cheese.icon;
+                    const cheeseIcon = createIllustration(`images/flag-${cheese.country}.svg`, 'cheese-icon-small', 44);
 
                     const cheeseName = document.createElement('div');
                     cheeseName.className = 'cheese-name';
@@ -2814,7 +2850,7 @@
 
                 // Mettre à jour le logo
                 if (cheeseLogo) {
-                    cheeseLogo.textContent = recipe.emoji;
+                    cheeseLogo.src = recipe.image;
                 }
             }
 

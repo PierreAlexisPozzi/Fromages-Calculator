@@ -16,11 +16,12 @@ Indiquez le nombre de convives par appétit (😒 Éco, 😋 Normal, 🤤 Gourma
 - **Réglages mémorisés** dans le navigateur (localStorage, aucun cookie)
 - **Lien direct par recette** : `…/#fondue`, `…/#tartiflette`, `…/#croziflette`
 - **Style cartoon** : contours encrés, ombres franches, police arrondie (Fredoka / Nunito), bandeau qui coule comme du fromage fondu
+- **Illustrations maison** (SVG, dossier `images/`) : ingrédients et recettes en personnages kawaii, drapeaux ronds lisibles sur tous les systèmes (les drapeaux emoji ne s'affichent pas sous Windows)
 - Responsive (menu latéral sur PC, popup de saisie sur mobile), navigation au clavier, respect de `prefers-reduced-motion`
 
 ## Lancer en local
 
-L'application est un unique fichier `index.html` sans build.
+L'application tient dans `index.html` (sans build) et le dossier `images/` pour les illustrations.
 
 ```bash
 npm install
@@ -33,3 +34,4 @@ Ou ouvrez simplement `index.html` dans un navigateur.
 
 Dans `index.html`, ajoutez une entrée à l'objet `recipes` (titre, couleurs, ingrédients avec `baseValue` par personne en mode Normal, fromages, conseils), puis un lien `.recipe-option` avec le `data-recipe` correspondant dans le menu.
 Pour afficher une conversion en conditionnement, ajoutez `pack: { size, singular, plural }` à l'ingrédient.
+Chaque recette et chaque ingrédient référence son illustration via `image: "images/....svg"` ; les fromages conseillés indiquent leur pays via `country` (`fr`, `ch`, `it`, `nl`, `es`, `at` → `images/flag-xx.svg`).
