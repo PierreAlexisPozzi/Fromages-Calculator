@@ -432,6 +432,9 @@
         }
         
         .info-icon {
+            background: none;
+            border: none;
+            padding: 0;
             color: var(--dark);
             cursor: help;
             opacity: 0.7;
@@ -575,7 +578,7 @@
         }
         
         .cheese-content.show {
-            max-height: 1000px;
+            max-height: 3000px;
             padding: 0 2rem 2rem;
         }
         
@@ -696,7 +699,10 @@
             text-align: center;
             border-radius: 8px;
             padding: 1rem;
-            position: fixed;
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 10000;
             opacity: 0;
             transition: opacity 0.3s;
@@ -706,9 +712,130 @@
             line-height: 1.4;
         }
         
-        .tooltip:hover .tooltiptext {
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--dark) transparent transparent transparent;
+        }
+        
+        .tooltip.open .tooltiptext,
+        .tooltip:has(.info-icon:focus-visible) .tooltiptext {
             visibility: visible;
             opacity: 1;
+        }
+        
+        /* Survol uniquement sur les appareils qui le gèrent (évite le :hover collant au toucher) */
+        @media (hover: hover) {
+            .tooltip:hover .tooltiptext {
+                visibility: visible;
+                opacity: 1;
+            }
+        }
+        
+        .ingredient-hint {
+            margin-top: 0.4rem;
+            font-size: 0.85rem;
+            color: var(--dark);
+            opacity: 0.75;
+            font-style: italic;
+            min-height: 1.1em;
+        }
+        
+        .customize-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .reset-btn {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--dark);
+            border-radius: 20px;
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .reset-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        
+        .shopping-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            padding: 0 2rem 2rem;
+        }
+        
+        .shopping-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.3rem;
+            border: none;
+            border-radius: 25px;
+            background: var(--primary);
+            color: white;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s, background 0.3s;
+        }
+        
+        .shopping-btn:hover {
+            transform: translateY(-2px);
+            background: var(--dark);
+        }
+        
+        .shopping-btn.secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--primary);
+        }
+        
+        .shopping-btn.secondary:hover {
+            background: var(--light);
+        }
+        
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 2rem;
+            transform: translate(-50%, 150%);
+            background: var(--dark);
+            color: white;
+            padding: 0.8rem 1.4rem;
+            border-radius: 25px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            font-size: 0.95rem;
+            z-index: 3000;
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            pointer-events: none;
+            max-width: calc(100% - 2rem);
+            text-align: center;
+        }
+        
+        .toast.show {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+        
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        .total-people.mobile-total:focus-visible {
+            outline: 3px solid var(--dark);
+            outline-offset: 2px;
         }
         
         footer {
@@ -896,10 +1023,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
     z-index: 2000;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
+    padding: 1rem;
+    pointer-events: none;
 }
 
 .cookies-popup {
@@ -911,6 +1039,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: popupAppear 0.3s ease-out;
     text-align: center;
+    pointer-events: auto;
 }
 
 .cookies-title {
@@ -972,7 +1101,6 @@
         align-items: flex-end;
         justify-content: flex-end;
         padding: 20px;
-        background: rgba(0, 0, 0, 0.3); /* Fond plus léger sur desktop */
     }
 
     .cookies-popup {
@@ -1007,14 +1135,8 @@
     }
 }
 
-/* Version mobile - Conserver le comportement actuel */
+/* Version mobile - Bandeau en bas de l'écran */
 @media (max-width: 768px) {
-    .cookies-popup-overlay {
-        background: rgba(0, 0, 0, 0.7);
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-    }
 
     .cookies-popup {
         animation: popupAppear 0.3s ease-out;
@@ -1129,21 +1251,10 @@
             .tooltip .tooltiptext {
                 width: 200px;
                 font-size: 0.8rem;
-                position: absolute;
-                bottom: 130%;
-                left: 50%;
-                transform: translateX(-50%);
             }
             
-            .tooltip .tooltiptext::after {
-                content: "";
-                position: absolute;
-                top: 100%;
-                left: 50%;
-                margin-left: -5px;
-                border-width: 5px;
-                border-style: solid;
-                border-color: var(--dark) transparent transparent transparent;
+            .desktop-total {
+                display: none;
             }
             
             /* Centrer le texte sur mobile */
@@ -1216,12 +1327,6 @@
                 max-width: 600px;
             }
             
-            .tooltip .tooltiptext {
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-            }
-            
             /* Centrer le texte sur desktop */
             .input-section h2 {
                 text-align: center;
@@ -1238,36 +1343,44 @@
                 max-width: 200px;
             }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Bouton menu mobile -->
-    <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Ouvrir le menu des recettes" aria-controls="recipe-sidebar" aria-expanded="false">☰</button>
     <div class="mobile-overlay" id="mobile-overlay"></div>
 
     <div class="main-container" id="main-container">
         <!-- Sidebar pour le menu des recettes -->
-        <nav class="recipe-sidebar" id="recipe-sidebar">
+        <nav class="recipe-sidebar" id="recipe-sidebar" aria-label="Recettes">
             <div class="sidebar-header">
                 <h2>Choisir une recette</h2>
-                <button class="sidebar-toggle" id="sidebar-toggle">
+                <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Réduire le menu" aria-expanded="true">
                     <i class="fi fi-rs-apps"></i>
                 </button>
             </div>
             <div class="recipe-list">
-                <a href="#" class="recipe-option active" data-recipe="raclette">
+                <a href="#raclette" class="recipe-option active" data-recipe="raclette" aria-current="page">
                     <i class="fi fi-rs-cheese"></i>
                     <span class="recipe-text">Raclette</span>
                 </a>
-                <a href="#" class="recipe-option" data-recipe="fondue">
+                <a href="#fondue" class="recipe-option" data-recipe="fondue">
                     <i class="fi fi-rr-fondue-pot"></i>
                     <span class="recipe-text">Fondue</span>
                 </a>
-                <a href="#" class="recipe-option" data-recipe="tartiflette">
+                <a href="#tartiflette" class="recipe-option" data-recipe="tartiflette">
                     <i class="fi fi-rs-soup"></i>
                     <span class="recipe-text">Tartiflette</span>
                 </a>
-                <a href="#" class="recipe-option" data-recipe="croziflette">
+                <a href="#croziflette" class="recipe-option" data-recipe="croziflette">
                     <i class="fi fi-rs-pan-food"></i>
                     <span class="recipe-text">Croziflette</span>
                 </a>
@@ -1296,36 +1409,36 @@
                         <div class="mode-counter" id="counter-eco">
                             <span class="mode-label">😒 Éco</span>
                             <div class="people-counter">
-                                <button class="counter-btn decrease" data-mode="eco">-</button>
+                                <button class="counter-btn decrease" data-mode="eco" aria-label="Retirer une personne (Éco)">−</button>
                                 <div class="people-display" id="people-count-eco">0</div>
-                                <button class="counter-btn increase" data-mode="eco">+</button>
+                                <button class="counter-btn increase" data-mode="eco" aria-label="Ajouter une personne (Éco)">+</button>
                             </div>
                         </div>
                         <div class="mode-counter" id="counter-normal">
                             <span class="mode-label">😋 Normal</span>
                             <div class="people-counter">
-                                <button class="counter-btn decrease" data-mode="normal">-</button>
+                                <button class="counter-btn decrease" data-mode="normal" aria-label="Retirer une personne (Normal)">−</button>
                                 <div class="people-display" id="people-count-normal">4</div>
-                                <button class="counter-btn increase" data-mode="normal">+</button>
+                                <button class="counter-btn increase" data-mode="normal" aria-label="Ajouter une personne (Normal)">+</button>
                             </div>
                         </div>
                         <div class="mode-counter" id="counter-gourmand">
                             <span class="mode-label">🤤 Gourmand</span>
                             <div class="people-counter">
-                                <button class="counter-btn decrease" data-mode="gourmand">-</button>
+                                <button class="counter-btn decrease" data-mode="gourmand" aria-label="Retirer une personne (Gourmand)">−</button>
                                 <div class="people-display" id="people-count-gourmand">0</div>
-                                <button class="counter-btn increase" data-mode="gourmand">+</button>
+                                <button class="counter-btn increase" data-mode="gourmand" aria-label="Ajouter une personne (Gourmand)">+</button>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="total-people mobile-total">
-                        Total: <span id="total-people-count">5</span> personnes
+                    <div class="total-people mobile-total" role="button" tabindex="0" aria-haspopup="dialog" aria-live="polite">
+                        Total : <span id="total-people-count">4</span> personnes ✏️
                     </div>
-                    <div class="total-people desktop-total">
-                        Total: <span id="desktop-total-people-count">5</span> personnes
+                    <div class="total-people desktop-total" aria-live="polite">
+                        Total : <span id="desktop-total-people-count">4</span> personnes
                     </div>
-                    <div class="funny-phrase" id="main-funny-phrase">
+                    <div class="funny-phrase" id="main-funny-phrase" aria-live="polite">
                         <!-- La phrase humoristique sera insérée ici par JavaScript -->
                     </div>
                 </section>
@@ -1334,8 +1447,17 @@
                     <!-- Les cartes d'ingrédients seront générées dynamiquement -->
                 </section>
                 
+                <section class="shopping-section" aria-label="Liste de courses">
+                    <button type="button" class="shopping-btn" id="copy-list">
+                        📋 Copier la liste de courses
+                    </button>
+                    <button type="button" class="shopping-btn secondary" id="share-list" hidden>
+                        📤 Partager
+                    </button>
+                </section>
+                
                 <section class="customize-section">
-                    <button class="customize-toggle" id="customize-toggle">
+                    <button class="customize-toggle" id="customize-toggle" aria-expanded="false" aria-controls="customize-controls">
                         <i class="fi fi-rs-settings"></i>
                         Personnaliser les quantités par personne (mode Normal)
                     </button>
@@ -1357,37 +1479,37 @@
 
     <!-- Popup pour mobile -->
     <div class="mobile-popup-overlay" id="mobile-popup-overlay">
-        <div class="mobile-popup">
+        <div class="mobile-popup" role="dialog" aria-modal="true" aria-labelledby="popup-title">
             <div class="popup-header">
-                <h3 class="popup-title">Nombre de personnes</h3>
-                <button class="close-popup" id="close-popup">✕</button>
+                <h3 class="popup-title" id="popup-title">Nombre de personnes</h3>
+                <button class="close-popup" id="close-popup" aria-label="Fermer">✕</button>
             </div>
             
             <div class="popup-counters">
                 <div class="popup-counter">
                     <span class="popup-counter-label">😒 Éco</span>
                     <div class="popup-counter-controls">
-                        <button class="popup-counter-btn decrease" data-mode="eco">-</button>
+                        <button class="popup-counter-btn decrease" data-mode="eco" aria-label="Retirer une personne (Éco)">−</button>
                         <div class="popup-counter-display" id="popup-people-count-eco">0</div>
-                        <button class="popup-counter-btn increase" data-mode="eco">+</button>
+                        <button class="popup-counter-btn increase" data-mode="eco" aria-label="Ajouter une personne (Éco)">+</button>
                     </div>
                 </div>
                 
                 <div class="popup-counter">
                     <span class="popup-counter-label">😋 Normal</span>
                     <div class="popup-counter-controls">
-                        <button class="popup-counter-btn decrease" data-mode="normal">-</button>
+                        <button class="popup-counter-btn decrease" data-mode="normal" aria-label="Retirer une personne (Normal)">−</button>
                         <div class="popup-counter-display" id="popup-people-count-normal">4</div>
-                        <button class="popup-counter-btn increase" data-mode="normal">+</button>
+                        <button class="popup-counter-btn increase" data-mode="normal" aria-label="Ajouter une personne (Normal)">+</button>
                     </div>
                 </div>
                 
                 <div class="popup-counter">
                     <span class="popup-counter-label">🤤 Gourmand</span>
                     <div class="popup-counter-controls">
-                        <button class="popup-counter-btn decrease" data-mode="gourmand">-</button>
+                        <button class="popup-counter-btn decrease" data-mode="gourmand" aria-label="Retirer une personne (Gourmand)">−</button>
                         <div class="popup-counter-display" id="popup-people-count-gourmand">0</div>
-                        <button class="popup-counter-btn increase" data-mode="gourmand">+</button>
+                        <button class="popup-counter-btn increase" data-mode="gourmand" aria-label="Ajouter une personne (Gourmand)">+</button>
                     </div>
                 </div>
             </div>
@@ -1400,13 +1522,13 @@
 
     <!-- Popup pour les cookies -->
     <div class="cookies-popup-overlay" id="cookies-popup-overlay">
-        <div class="cookies-popup">
+        <div class="cookies-popup" role="region" aria-label="Cookies">
             <h2 class="cookies-title">
                 <span>🍪</span> Cookies fromagers
             </h2>
             <p class="cookies-message">
-                Nous utilisons des cookies pour améliorer votre expérience fromagère. 
-                Acceptez-vous ces délices croustillants ?
+                Ce site n'utilise aucun cookie de suivi : seuls vos réglages sont gardés dans votre navigateur.
+                Mais on accepte volontiers les délices croustillants !
             </p>
             <div class="cookies-buttons">
                 <button class="cookie-btn accept" id="accept-cookies">
@@ -1418,6 +1540,8 @@
             </div>
         </div>
     </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1440,7 +1564,7 @@
                             category: "cheese",
                             baseValue: 250,
                             unit: "grammes",
-                            tooltip: "Recommandation : 200-300g par personne. Les vrais fondues peuvent aller jusqu'à 350g!"
+                            tooltip: "Recommandation : 200-300g par personne. Les vrais fondus peuvent aller jusqu'à 350g !"
                         },
                         {
                             name: "Pommes de terre",
@@ -1488,7 +1612,7 @@
                             {
                                 icon: "🇳🇱",
                                 name: "Gouda affiné",
-                                desc: "Pays-Bas - Hollande. Version affinée du célèbre fromage hollandais, caramelisé et fondant"
+                                desc: "Pays-Bas - Hollande. Version affinée du célèbre fromage hollandais, caramélisé et fondant"
                             },
                             {
                                 icon: "🇪🇸",
@@ -1560,7 +1684,8 @@
                             category: "wine",
                             baseValue: 100,
                             unit: "ml",
-                            tooltip: "Recommandation : 80-120ml par personne. Vin blanc sec pour la préparation de la fondue."
+                            tooltip: "Recommandation : 80-120ml par personne. Vin blanc sec pour la préparation de la fondue.",
+                            pack: { size: 750, singular: "bouteille de 75 cl", plural: "bouteilles de 75 cl" }
                         },
                         {
                             name: "Accompagnements",
@@ -1609,10 +1734,10 @@
                     tips: [
                         "Utilisez un caquelon en terre cuite pour une fondue traditionnelle",
                         "Frottez le caquelon avec une gousse d'ail avant de préparer la fondue",
-                        "Mélangez les fromages avec de la maïzena pour éviter qu'ils ne filent",
+                        "Délayez une cuillère de maïzena dans le vin pour une fondue bien liée qui ne tranche pas",
                         "Remuez constamment en forme de 8 pendant la cuisson",
                         "Servez avec du vin blanc de Savoie ou un thé pour accompagner",
-                        "Ne buvez pas d'eau pendant le repas, cela peut causer des problèmes de digestion"
+                        "Côté boisson, la tradition préfère le vin blanc ou le thé chaud à l'eau froide (l'effet sur la digestion relève surtout de la croyance populaire)"
                     ]
                 },
                 tartiflette: {
@@ -1632,7 +1757,8 @@
                             category: "cheese",
                             baseValue: 125,
                             unit: "grammes",
-                            tooltip: "Recommandation : 100-150g par personne. Un reblochon entier (500g) pour 4-5 personnes."
+                            tooltip: "Recommandation : 100-150g par personne. Un reblochon entier (500g) pour 4-5 personnes.",
+                            pack: { size: 500, singular: "reblochon de ~500 g", plural: "reblochons de ~500 g" }
                         },
                         {
                             name: "Pommes de terre",
@@ -1648,7 +1774,8 @@
                             category: "bacon",
                             baseValue: 100,
                             unit: "grammes",
-                            tooltip: "Recommandation : 80-120g par personne. Lardons fumés de préférence pour plus de saveur."
+                            tooltip: "Recommandation : 80-120g par personne. Lardons fumés de préférence pour plus de saveur.",
+                            pack: { size: 200, singular: "barquette de 200 g", plural: "barquettes de 200 g" }
                         },
                         {
                             name: "Oignons",
@@ -1664,7 +1791,8 @@
                             category: "cream",
                             baseValue: 50,
                             unit: "ml",
-                            tooltip: "Recommandation : 40-60ml par personne. Crème fraîche épaisse pour plus d'onctuosité."
+                            tooltip: "Recommandation : 40-60ml par personne. Crème fraîche épaisse pour plus d'onctuosité.",
+                            pack: { size: 200, singular: "pot de 20 cl", plural: "pots de 20 cl" }
                         },
                         {
                             name: "Vin blanc",
@@ -1672,7 +1800,8 @@
                             category: "wine",
                             baseValue: 50,
                             unit: "ml",
-                            tooltip: "Recommandation : 40-60ml par personne. Vin blanc sec pour déglacer les oignons et lardons."
+                            tooltip: "Recommandation : 40-60ml par personne. Vin blanc sec pour déglacer les oignons et lardons.",
+                            pack: { size: 750, singular: "bouteille de 75 cl", plural: "bouteilles de 75 cl" }
                         }
                     ],
                     cheeseSection: {
@@ -1716,7 +1845,8 @@
                             category: "cheese",
                             baseValue: 125,
                             unit: "grammes",
-                            tooltip: "Recommandation : 100-150g par personne. Même fromage que pour la tartiflette traditionnelle."
+                            tooltip: "Recommandation : 100-150g par personne. Même fromage que pour la tartiflette traditionnelle.",
+                            pack: { size: 500, singular: "reblochon de ~500 g", plural: "reblochons de ~500 g" }
                         },
                         {
                             name: "Crozet",
@@ -1724,7 +1854,8 @@
                             category: "potato",
                             baseValue: 100,
                             unit: "grammes",
-                            tooltip: "Recommandation : 80-120g par personne. Petites pâtes carrées savoyardes à base de sarrasin ou de blé."
+                            tooltip: "Recommandation : 80-120g par personne. Petites pâtes carrées savoyardes à base de sarrasin ou de blé.",
+                            pack: { size: 400, singular: "paquet de 400 g", plural: "paquets de 400 g" }
                         },
                         {
                             name: "Lardons",
@@ -1732,7 +1863,8 @@
                             category: "bacon",
                             baseValue: 80,
                             unit: "grammes",
-                            tooltip: "Recommandation : 70-100g par personne. Lardons fumés pour un goût plus prononcé."
+                            tooltip: "Recommandation : 70-100g par personne. Lardons fumés pour un goût plus prononcé.",
+                            pack: { size: 200, singular: "barquette de 200 g", plural: "barquettes de 200 g" }
                         },
                         {
                             name: "Oignons",
@@ -1748,7 +1880,8 @@
                             category: "cream",
                             baseValue: 60,
                             unit: "ml",
-                            tooltip: "Recommandation : 50-70ml par personne. Crème fraîche épaisse pour lier l'ensemble."
+                            tooltip: "Recommandation : 50-70ml par personne. Crème fraîche épaisse pour lier l'ensemble.",
+                            pack: { size: 200, singular: "pot de 20 cl", plural: "pots de 20 cl" }
                         },
                         {
                             name: "Vin blanc",
@@ -1756,7 +1889,8 @@
                             category: "wine",
                             baseValue: 30,
                             unit: "ml",
-                            tooltip: "Recommandation : 25-40ml par personne. Vin blanc sec pour déglacer la poêlée."
+                            tooltip: "Recommandation : 25-40ml par personne. Vin blanc sec pour déglacer la poêlée.",
+                            pack: { size: 750, singular: "bouteille de 75 cl", plural: "bouteilles de 75 cl" }
                         }
                     ],
                     cheeseSection: {
@@ -1806,12 +1940,9 @@
             };
 
             // Éléments DOM
-            const peopleCountEco = document.getElementById('people-count-eco');
-            const peopleCountNormal = document.getElementById('people-count-normal');
-            const peopleCountGourmand = document.getElementById('people-count-gourmand');
             const totalPeopleCount = document.getElementById('total-people-count');
             const desktopTotalPeopleCount = document.getElementById('desktop-total-people-count');
-            
+
             const pageTitle = document.getElementById('page-title');
             const pageSubtitle = document.getElementById('page-subtitle');
             const inputTitle = document.getElementById('input-title');
@@ -1820,17 +1951,13 @@
             const cheeseSection = document.getElementById('cheese-section');
             const tipsSection = document.getElementById('tips-section');
             const cheeseLogo = document.querySelector('.cheese-logo');
-            
+            const toast = document.getElementById('toast');
+
             // Éléments du popup mobile
             const mobilePopupOverlay = document.getElementById('mobile-popup-overlay');
             const closePopup = document.getElementById('close-popup');
             const mobileTotal = document.querySelector('.total-people.mobile-total');
             const mainFunnyPhrase = document.getElementById('main-funny-phrase');
-            
-            // Éléments des compteurs dans le popup
-            const popupPeopleCountEco = document.getElementById('popup-people-count-eco');
-            const popupPeopleCountNormal = document.getElementById('popup-people-count-normal');
-            const popupPeopleCountGourmand = document.getElementById('popup-people-count-gourmand');
             const popupFunnyPhrase = document.getElementById('popup-funny-phrase');
 
             // Éléments du popup cookies
@@ -1838,15 +1965,33 @@
             const acceptCookies = document.getElementById('accept-cookies');
             const rejectCookies = document.getElementById('reject-cookies');
 
+            // Éléments de la liste de courses
+            const copyListButton = document.getElementById('copy-list');
+            const shareListButton = document.getElementById('share-list');
+
+            // Limites
+            const MAX_PEOPLE_PER_MODE = 20;
+            const MIN_PER_PERSON = 10;
+            const MAX_PER_PERSON = 500;
+            const DEFAULT_RECIPE = 'raclette';
+            const DEFAULT_TITLE = document.title;
+            const STORAGE_KEY = 'fromageCalculatorState';
+
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const numberFormat = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 });
+
             // Variables globales
             let counts = {
                 eco: 0,
                 normal: 4,
                 gourmand: 0
             };
-            
-            let currentRecipe = 'raclette';
-            
+
+            let currentRecipe = DEFAULT_RECIPE;
+
+            // Quantités personnalisées par recette : { recette: { catégorie: valeur } }
+            let customValues = {};
+
             // Multiplicateurs pour chaque mode (basés sur le mode Normal)
             const modeMultipliers = {
                 eco: 0.8,      // 80% des quantités normales
@@ -1869,7 +2014,7 @@
                 10: "Nombre rond, fromage carré, tout va bien ! 🔟",
                 11: "Onze, c'est le nombre du fromage qui dépasse ! 🏔️",
                 12: "Une douzaine de gourmands, le fromage va souffrir ! 😱",
-                13: "Trece, chiffre chanceux pour les amoureux du fromage ! 🍀",
+                13: "Treize, chiffre chanceux pour les amoureux du fromage ! 🍀",
                 14: "Quatorze personnes ? Le fromage a appelé des renforts ! 📞",
                 15: "Quinze ! On approche du record du monde ! 🏆",
                 16: "Seize personnes, seize portions... ou plus ! 😉",
@@ -1878,102 +2023,242 @@
                 19: "Dix-neuf, bientôt la vingtaine de fromageux ! 🎯",
                 20: "VINGT ! On va avoir besoin d'une meule ! 🧀"
             };
-            
+
+            // Mémoriser les quantités recommandées pour pouvoir les restaurer
+            for (const name in recipes) {
+                recipes[name].ingredients.forEach(ingredient => {
+                    ingredient.defaultValue = ingredient.baseValue;
+                });
+            }
+
             // Fonctions
-            
+
+            function clamp(value, min, max) {
+                return Math.min(Math.max(value, min), max);
+            }
+
+            function getTotalPeople() {
+                return counts.eco + counts.normal + counts.gourmand;
+            }
+
+            function getRecipeName(recipe) {
+                return recipe.title.replace(' Calculator', '');
+            }
+
+            // Sauvegarde locale (aucun cookie) : recette, convives et quantités personnalisées
+            function saveState() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                        recipe: currentRecipe,
+                        counts: counts,
+                        custom: customValues
+                    }));
+                } catch (e) {
+                    // Stockage indisponible (navigation privée...) : on continue sans
+                }
+            }
+
+            function loadState() {
+                let state = {};
+                try {
+                    state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+                } catch (e) {
+                    return;
+                }
+
+                if (state.counts) {
+                    for (const mode in counts) {
+                        const value = parseInt(state.counts[mode], 10);
+                        if (!isNaN(value)) {
+                            counts[mode] = clamp(value, 0, MAX_PEOPLE_PER_MODE);
+                        }
+                    }
+                }
+
+                if (state.custom && typeof state.custom === 'object') {
+                    for (const name in recipes) {
+                        const saved = state.custom[name];
+                        if (!saved) continue;
+                        recipes[name].ingredients.forEach(ingredient => {
+                            const value = parseInt(saved[ingredient.category], 10);
+                            if (!isNaN(value)) {
+                                ingredient.baseValue = clamp(value, MIN_PER_PERSON, MAX_PER_PERSON);
+                            }
+                        });
+                    }
+                    rebuildCustomValues();
+                }
+
+                if (recipes[state.recipe]) {
+                    currentRecipe = state.recipe;
+                }
+            }
+
+            // Ne conserver que les valeurs qui diffèrent des recommandations
+            function rebuildCustomValues() {
+                customValues = {};
+                for (const name in recipes) {
+                    recipes[name].ingredients.forEach(ingredient => {
+                        if (ingredient.baseValue !== ingredient.defaultValue) {
+                            customValues[name] = customValues[name] || {};
+                            customValues[name][ingredient.category] = ingredient.baseValue;
+                        }
+                    });
+                }
+            }
+
+            // 1250 grammes -> "1,25 kg", 1500 ml -> "1,5 litres"
+            function formatQuantity(value, unit) {
+                const rounded = Math.round(value);
+                if (unit === 'grammes' && rounded >= 1000) {
+                    return { amount: numberFormat.format(rounded / 1000), unit: 'kg' };
+                }
+                if (unit === 'ml' && rounded >= 1000) {
+                    return { amount: numberFormat.format(rounded / 1000), unit: 'litres' };
+                }
+                return { amount: String(rounded), unit: unit };
+            }
+
+            // Conversion en conditionnements du commerce (bouteilles, pots...)
+            function getPackHint(ingredient, value) {
+                const rounded = Math.round(value);
+                if (!ingredient.pack || rounded <= 0) return '';
+                const packs = Math.ceil(rounded / ingredient.pack.size);
+                return `≈ ${packs} ${packs > 1 ? ingredient.pack.plural : ingredient.pack.singular}`;
+            }
+
             function getCurrentValues() {
                 const recipe = recipes[currentRecipe];
                 const values = {};
-                
+
                 // Pour chaque ingrédient, calculer la quantité totale en cumulant les modes
                 recipe.ingredients.forEach(ingredient => {
                     let total = 0;
-                    
+
                     // Ajouter la quantité pour chaque mode
                     for (const mode in counts) {
                         total += ingredient.baseValue * counts[mode] * modeMultipliers[mode];
                     }
-                    
+
                     values[ingredient.category] = total;
                 });
-                
+
                 return values;
             }
-            
+
             function updateCustomizeFields() {
                 const recipe = recipes[currentRecipe];
-                
+
                 // Vider les contrôles existants
                 customizeControls.innerHTML = '';
-                
+
                 // Créer les nouveaux contrôles
                 recipe.ingredients.forEach(ingredient => {
                     const controlDiv = document.createElement('div');
                     controlDiv.className = 'customize-control';
-                    
+
                     const label = document.createElement('label');
                     label.htmlFor = `${ingredient.category}-per-person`;
                     label.textContent = `${ingredient.name} (${ingredient.unit}/personne - Normal)`;
-                    
+
                     const input = document.createElement('input');
                     input.type = 'number';
                     input.id = `${ingredient.category}-per-person`;
-                    input.min = '10';
-                    input.max = '500';
+                    input.min = String(MIN_PER_PERSON);
+                    input.max = String(MAX_PER_PERSON);
+                    input.step = '5';
+                    input.inputMode = 'numeric';
                     input.value = Math.round(ingredient.baseValue);
-                    
+
                     input.addEventListener('change', updatePerPersonValues);
-                    
+
                     controlDiv.appendChild(label);
                     controlDiv.appendChild(input);
                     customizeControls.appendChild(controlDiv);
                 });
+
+                // Bouton pour revenir aux quantités recommandées
+                const actions = document.createElement('div');
+                actions.className = 'customize-actions';
+
+                const resetButton = document.createElement('button');
+                resetButton.type = 'button';
+                resetButton.className = 'reset-btn';
+                resetButton.textContent = '↺ Revenir aux quantités recommandées';
+                resetButton.addEventListener('click', resetPerPersonValues);
+
+                actions.appendChild(resetButton);
+                customizeControls.appendChild(actions);
             }
-            
-            function animateValue(element, oldValue, newValue, duration = 500) {
+
+            function animateValue(element, unitElement, oldValue, newValue, unit, duration = 500) {
+                // Annuler une animation en cours sur cet élément (clics rapides)
+                if (element.animationFrame) {
+                    cancelAnimationFrame(element.animationFrame);
+                }
+
+                function render(value) {
+                    const formatted = formatQuantity(value, unit);
+                    element.textContent = formatted.amount;
+                    unitElement.textContent = formatted.unit;
+                }
+
+                if (prefersReducedMotion || duration <= 0) {
+                    render(newValue);
+                    return;
+                }
+
                 const start = Date.now();
                 const change = newValue - oldValue;
-                
+
                 function update() {
                     const now = Date.now();
                     const elapsed = now - start;
                     const progress = Math.min(elapsed / duration, 1);
-                    
+
                     // Easing function for smooth animation
                     const easeOut = 1 - Math.pow(1 - progress, 3);
-                    
-                    const currentValue = Math.round(oldValue + change * easeOut);
-                    element.textContent = currentValue;
-                    
+
+                    render(oldValue + change * easeOut);
+
                     if (progress < 1) {
-                        requestAnimationFrame(update);
+                        element.animationFrame = requestAnimationFrame(update);
+                    } else {
+                        element.animationFrame = null;
                     }
                 }
-                
+
                 update();
             }
-            
+
             function triggerAnimation(element, animationClass) {
                 element.classList.add(animationClass);
                 setTimeout(() => {
                     element.classList.remove(animationClass);
                 }, 500);
             }
-            
+
             function updateQuantities() {
                 const currentValues = getCurrentValues();
                 const recipe = recipes[currentRecipe];
-                
+
                 // Mettre à jour chaque ingrédient
                 recipe.ingredients.forEach(ingredient => {
                     const quantityElement = document.getElementById(`${ingredient.category}-quantity`);
-                    if (quantityElement) {
-                        const oldValue = parseInt(quantityElement.textContent) || 0;
+                    const unitElement = document.getElementById(`${ingredient.category}-unit`);
+                    const hintElement = document.getElementById(`${ingredient.category}-hint`);
+                    if (quantityElement && unitElement) {
+                        const oldValue = parseFloat(quantityElement.dataset.value) || 0;
                         const newValue = Math.round(currentValues[ingredient.category]);
-                        
+                        quantityElement.dataset.value = newValue;
+
                         // Animation des valeurs avec compteur
-                        animateValue(quantityElement, oldValue, newValue);
-                        
+                        animateValue(quantityElement, unitElement, oldValue, newValue, ingredient.unit);
+
+                        if (hintElement) {
+                            hintElement.textContent = getPackHint(ingredient, newValue);
+                        }
+
                         // Animation de la carte
                         const card = document.getElementById(`${ingredient.category}-card`);
                         if (card) {
@@ -1981,7 +2266,7 @@
                         }
                     }
                 });
-                
+
                 // Animation spéciale pour le fromage
                 const cheeseFlow = document.getElementById('cheese-flow');
                 if (cheeseFlow) {
@@ -1991,416 +2276,606 @@
                     }, 1000);
                 }
             }
-            
+
             // Fonction pour obtenir une phrase humoristique
             function getFunnyPhrase(total) {
-                if (total === 0) return funnyPhrases[0];
                 if (total <= 20) return funnyPhrases[total];
                 return "Plus de 20 personnes ? Vous allez vider la fromagerie ! 🚀";
             }
 
             // Fonction pour mettre à jour les phrases humoristiques
             function updateFunnyPhrases() {
-                const total = counts.eco + counts.normal + counts.gourmand;
-                const phrase = getFunnyPhrase(total);
-                
+                const phrase = getFunnyPhrase(getTotalPeople());
+
                 // Mettre à jour la phrase dans le popup
                 if (popupFunnyPhrase) {
                     popupFunnyPhrase.textContent = phrase;
                 }
-                
+
                 // Mettre à jour la phrase sous le total principal
                 if (mainFunnyPhrase) {
                     mainFunnyPhrase.textContent = phrase;
                 }
             }
 
+            // Synchroniser tous les affichages de compteurs (page + popup + totaux)
+            function renderCounts() {
+                for (const mode in counts) {
+                    const displayElement = document.getElementById(`people-count-${mode}`);
+                    if (displayElement) {
+                        displayElement.textContent = counts[mode];
+                    }
+                    const popupDisplayElement = document.getElementById(`popup-people-count-${mode}`);
+                    if (popupDisplayElement) {
+                        popupDisplayElement.textContent = counts[mode];
+                    }
+                }
+
+                const total = getTotalPeople();
+                totalPeopleCount.textContent = total;
+                desktopTotalPeopleCount.textContent = total;
+
+                updateFunnyPhrases();
+            }
+
             function updatePeopleCount(mode, newCount) {
                 counts[mode] = newCount;
-                
-                // Mettre à jour l'affichage du compteur principal
+
                 const displayElement = document.getElementById(`people-count-${mode}`);
                 if (displayElement) {
                     triggerAnimation(displayElement, 'pulse');
-                    displayElement.textContent = newCount;
                 }
-                
-                // Mettre à jour l'affichage dans le popup
-                updatePopupCounter(mode, newCount);
-                
-                // Mettre à jour le total
-                const total = counts.eco + counts.normal + counts.gourmand;
-                totalPeopleCount.textContent = total;
-                desktopTotalPeopleCount.textContent = total;
-                
-                // Mettre à jour les phrases humoristiques
-                updateFunnyPhrases();
-                
+
+                renderCounts();
+                saveState();
+
                 // Recalculer les quantités
                 updateQuantities();
             }
-            
-            function updatePopupCounter(mode, newCount) {
-                const displayElement = document.getElementById(`popup-people-count-${mode}`);
-                if (displayElement) {
-                    displayElement.textContent = newCount;
+
+            function changePeopleCount(mode, isIncrease) {
+                if (isIncrease && counts[mode] < MAX_PEOPLE_PER_MODE) {
+                    updatePeopleCount(mode, counts[mode] + 1);
+                } else if (!isIncrease && counts[mode] > 0) {
+                    updatePeopleCount(mode, counts[mode] - 1);
                 }
             }
-            
+
             function updatePerPersonValues() {
                 // Quand l'utilisateur modifie manuellement, on met à jour les valeurs de base
                 const recipe = recipes[currentRecipe];
-                
+
                 recipe.ingredients.forEach(ingredient => {
                     const input = document.getElementById(`${ingredient.category}-per-person`);
                     if (input) {
-                        ingredient.baseValue = parseInt(input.value);
+                        const value = parseInt(input.value, 10);
+                        // Valeur vide ou invalide : on garde l'ancienne au lieu d'afficher NaN
+                        if (!isNaN(value)) {
+                            ingredient.baseValue = clamp(value, MIN_PER_PERSON, MAX_PER_PERSON);
+                        }
+                        input.value = ingredient.baseValue;
                     }
                 });
-                
+
+                rebuildCustomValues();
+                saveState();
+
                 // Recalculer les quantités
                 updateQuantities();
             }
-            
+
+            function resetPerPersonValues() {
+                recipes[currentRecipe].ingredients.forEach(ingredient => {
+                    ingredient.baseValue = ingredient.defaultValue;
+                    const input = document.getElementById(`${ingredient.category}-per-person`);
+                    if (input) {
+                        input.value = ingredient.baseValue;
+                    }
+                });
+
+                rebuildCustomValues();
+                saveState();
+                updateQuantities();
+                showToast('Quantités recommandées restaurées 👌');
+            }
+
             function createIngredientCards() {
                 // Vider la section des résultats
                 resultsSection.innerHTML = '';
-                
+
                 const recipe = recipes[currentRecipe];
-                
+                let hasCheeseFlow = false;
+
                 // Créer les cartes d'ingrédients
                 recipe.ingredients.forEach(ingredient => {
                     const card = document.createElement('div');
                     card.className = `ingredient-card ${ingredient.category}`;
                     card.id = `${ingredient.category}-card`;
-                    
-                    // Ajouter l'animation de fromage qui coule uniquement pour le fromage
-                    if (ingredient.category.includes('cheese') || 
-                        ingredient.category === 'comte' || 
-                        ingredient.category === 'beaufort' || 
-                        ingredient.category === 'emmental') {
+
+                    // Ajouter l'animation de fromage qui coule sur la première carte de fromage
+                    // (un seul élément #cheese-flow pour garder un id unique)
+                    const isCheese = ingredient.category.includes('cheese') ||
+                        ingredient.category === 'comte' ||
+                        ingredient.category === 'beaufort' ||
+                        ingredient.category === 'emmental';
+                    if (isCheese && !hasCheeseFlow) {
                         const cheeseFlow = document.createElement('div');
                         cheeseFlow.className = 'cheese-flow';
                         cheeseFlow.id = 'cheese-flow';
                         cheeseFlow.textContent = '🧀';
+                        cheeseFlow.setAttribute('aria-hidden', 'true');
                         card.appendChild(cheeseFlow);
+                        hasCheeseFlow = true;
                     }
-                    
+
                     const icon = document.createElement('div');
                     icon.className = 'ingredient-icon';
                     icon.textContent = ingredient.icon;
-                    
+                    icon.setAttribute('aria-hidden', 'true');
+
                     const nameDiv = document.createElement('div');
                     nameDiv.className = 'ingredient-name';
-                    
+
                     const nameSpan = document.createElement('span');
                     nameSpan.textContent = ingredient.name;
-                    
+
                     const tooltipDiv = document.createElement('div');
                     tooltipDiv.className = 'tooltip';
-                    
-                    const infoIcon = document.createElement('span');
+
+                    const tooltipId = `${ingredient.category}-tooltip`;
+
+                    const infoIcon = document.createElement('button');
+                    infoIcon.type = 'button';
                     infoIcon.className = 'info-icon';
-                    infoIcon.innerHTML = '<i class="fi fi-rs-info"></i>';
-                    
+                    infoIcon.setAttribute('aria-label', `Recommandation pour : ${ingredient.name}`);
+                    infoIcon.setAttribute('aria-describedby', tooltipId);
+                    infoIcon.innerHTML = '<i class="fi fi-rs-info" aria-hidden="true"></i>';
+
+                    // Sur mobile (pas de survol), un appui ouvre/ferme l'infobulle
+                    infoIcon.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const isOpen = tooltipDiv.classList.contains('open');
+                        closeTooltips();
+                        tooltipDiv.classList.toggle('open', !isOpen);
+                    });
+
                     const tooltipText = document.createElement('span');
                     tooltipText.className = 'tooltiptext';
+                    tooltipText.id = tooltipId;
+                    tooltipText.setAttribute('role', 'tooltip');
                     tooltipText.textContent = ingredient.tooltip;
-                    
+
                     tooltipDiv.appendChild(infoIcon);
                     tooltipDiv.appendChild(tooltipText);
-                    
+
                     nameDiv.appendChild(nameSpan);
                     nameDiv.appendChild(tooltipDiv);
-                    
+
                     const quantity = document.createElement('div');
                     quantity.className = 'ingredient-quantity';
                     quantity.id = `${ingredient.category}-quantity`;
                     quantity.textContent = '0'; // Initialiser à 0 pour éviter NaN
-                    
+                    quantity.dataset.value = '0';
+
                     const unit = document.createElement('div');
                     unit.className = 'ingredient-unit';
+                    unit.id = `${ingredient.category}-unit`;
                     unit.textContent = ingredient.unit;
-                    
+
+                    const hint = document.createElement('div');
+                    hint.className = 'ingredient-hint';
+                    hint.id = `${ingredient.category}-hint`;
+
                     card.appendChild(icon);
                     card.appendChild(nameDiv);
                     card.appendChild(quantity);
                     card.appendChild(unit);
-                    
+                    card.appendChild(hint);
+
                     resultsSection.appendChild(card);
                 });
             }
-            
+
+            function closeTooltips() {
+                document.querySelectorAll('.tooltip.open').forEach(tooltip => {
+                    tooltip.classList.remove('open');
+                });
+            }
+
             function createCheeseSection() {
                 // Vider la section des fromages
                 cheeseSection.innerHTML = '';
-                
+
                 const recipe = recipes[currentRecipe];
-                
+
                 if (!recipe.cheeseSection) return;
-                
+
                 const cheeseToggle = document.createElement('button');
                 cheeseToggle.className = 'cheese-toggle';
                 cheeseToggle.id = 'cheese-toggle';
-                
+                cheeseToggle.setAttribute('aria-expanded', 'false');
+                cheeseToggle.setAttribute('aria-controls', 'cheese-content');
+
                 const toggleText = document.createElement('span');
                 toggleText.textContent = recipe.cheeseSection.title;
-                
+
                 const toggleIcon = document.createElement('span');
                 toggleIcon.className = 'icon';
                 toggleIcon.textContent = '▼';
-                
+                toggleIcon.setAttribute('aria-hidden', 'true');
+
                 cheeseToggle.appendChild(toggleText);
                 cheeseToggle.appendChild(toggleIcon);
-                
+
                 const cheeseContent = document.createElement('div');
                 cheeseContent.className = 'cheese-content';
                 cheeseContent.id = 'cheese-content';
-                
+
                 const cheeseGrid = document.createElement('div');
                 cheeseGrid.className = 'cheese-grid';
-                
+
                 // Créer les cartes de fromages
                 recipe.cheeseSection.cheeses.forEach(cheese => {
                     const cheeseCard = document.createElement('div');
                     cheeseCard.className = 'cheese-card';
-                    
+
                     const cheeseIcon = document.createElement('div');
                     cheeseIcon.className = 'cheese-icon-small';
                     cheeseIcon.textContent = cheese.icon;
-                    
+
                     const cheeseName = document.createElement('div');
                     cheeseName.className = 'cheese-name';
-                    
+
                     const cheeseOrigin = document.createElement('span');
                     cheeseOrigin.className = 'cheese-origin';
-                    
+
                     const cheeseNameText = document.createElement('span');
                     cheeseNameText.textContent = cheese.name;
-                    
+
                     cheeseName.appendChild(cheeseOrigin);
                     cheeseName.appendChild(cheeseNameText);
-                    
+
                     const cheeseDesc = document.createElement('div');
                     cheeseDesc.className = 'cheese-desc';
                     cheeseDesc.textContent = cheese.desc;
-                    
+
                     cheeseCard.appendChild(cheeseIcon);
                     cheeseCard.appendChild(cheeseName);
                     cheeseCard.appendChild(cheeseDesc);
-                    
+
                     cheeseGrid.appendChild(cheeseCard);
                 });
-                
+
                 cheeseContent.appendChild(cheeseGrid);
                 cheeseSection.appendChild(cheeseToggle);
                 cheeseSection.appendChild(cheeseContent);
-                
+
                 // Ajouter l'événement pour le toggle
                 cheeseToggle.addEventListener('click', function() {
-                    cheeseContent.classList.toggle('show');
-                    cheeseToggle.classList.toggle('active');
+                    const isOpen = cheeseContent.classList.toggle('show');
+                    cheeseToggle.classList.toggle('active', isOpen);
+                    cheeseToggle.setAttribute('aria-expanded', String(isOpen));
                 });
             }
-            
+
             function createTipsSection() {
                 // Vider la section des conseils
                 tipsSection.innerHTML = '';
-                
+
                 const recipe = recipes[currentRecipe];
-                
+
                 const tipsTitle = document.createElement('h3');
                 tipsTitle.className = 'tips-title';
                 tipsTitle.textContent = 'Conseils pour une ' + currentRecipe + ' réussie';
-                
+
                 const tipsList = document.createElement('ul');
                 tipsList.className = 'tips-list';
-                
+
                 // Créer la liste des conseils
                 recipe.tips.forEach(tip => {
                     const tipItem = document.createElement('li');
                     tipItem.textContent = tip;
                     tipsList.appendChild(tipItem);
                 });
-                
+
                 tipsSection.appendChild(tipsTitle);
                 tipsSection.appendChild(tipsList);
             }
-            
+
             function applyTheme(recipeName) {
                 const recipe = recipes[recipeName];
                 const root = document.documentElement;
-                
+
                 // Appliquer les couleurs de la recette
                 root.style.setProperty('--primary', recipe.colors.primary);
                 root.style.setProperty('--secondary', recipe.colors.secondary);
                 root.style.setProperty('--dark', recipe.colors.dark);
-                
+
                 // Mettre à jour le logo
                 if (cheeseLogo) {
                     cheeseLogo.textContent = recipe.emoji;
                 }
             }
-            
+
             function setRecipe(recipeName) {
                 currentRecipe = recipeName;
                 const recipe = recipes[recipeName];
-                
+
                 // Appliquer le thème de couleurs
                 applyTheme(recipeName);
-                
+
                 // Mettre à jour les titres
                 pageTitle.textContent = recipe.title;
                 pageSubtitle.textContent = recipe.subtitle;
                 inputTitle.textContent = recipe.inputTitle;
-                
+                document.title = recipeName === DEFAULT_RECIPE
+                    ? DEFAULT_TITLE
+                    : `${getRecipeName(recipe)} - Fromage Calculator`;
+
+                // Mettre à jour le menu
+                recipeOptions.forEach(option => {
+                    const isActive = option.getAttribute('data-recipe') === recipeName;
+                    option.classList.toggle('active', isActive);
+                    if (isActive) {
+                        option.setAttribute('aria-current', 'page');
+                    } else {
+                        option.removeAttribute('aria-current');
+                    }
+                });
+
                 // Recréer les sections
                 createIngredientCards();
                 createCheeseSection();
                 createTipsSection();
-                
+
                 // Mettre à jour les contrôles de personnalisation
                 updateCustomizeFields();
-                
+
                 // Recalculer les quantités
                 updateQuantities();
-                
+
                 // Mettre à jour les phrases humoristiques
                 updateFunnyPhrases();
+
+                saveState();
             }
-            
+
+            // Recette indiquée dans l'URL (#fondue...) pour pouvoir partager un lien direct
+            function getRecipeFromHash() {
+                const name = decodeURIComponent(window.location.hash.slice(1)).toLowerCase();
+                return recipes[name] ? name : null;
+            }
+
+            // Liste de courses au format texte
+            function buildShoppingList() {
+                const recipe = recipes[currentRecipe];
+                const values = getCurrentValues();
+                const total = getTotalPeople();
+
+                const modeLabels = { eco: 'éco', normal: 'normal', gourmand: 'gourmand' };
+                const details = Object.keys(counts)
+                    .filter(mode => counts[mode] > 0)
+                    .map(mode => `${counts[mode]} ${modeLabels[mode]}`)
+                    .join(', ');
+
+                const lines = [
+                    `${recipe.emoji} ${getRecipeName(recipe)} pour ${total} personne${total > 1 ? 's' : ''} (${details})`,
+                    ''
+                ];
+
+                recipe.ingredients.forEach(ingredient => {
+                    const value = values[ingredient.category];
+                    const formatted = formatQuantity(value, ingredient.unit);
+                    const hint = getPackHint(ingredient, value);
+                    lines.push(`- ${ingredient.name} : ${formatted.amount} ${formatted.unit}${hint ? ` (${hint})` : ''}`);
+                });
+
+                if (window.location.protocol.startsWith('http')) {
+                    lines.push('', `Calculé avec Fromage Calculator : ${window.location.href}`);
+                }
+
+                return lines.join('\n');
+            }
+
+            async function copyShoppingList() {
+                if (getTotalPeople() === 0) {
+                    showToast('Ajoutez au moins une personne 😉');
+                    return;
+                }
+
+                const text = buildShoppingList();
+                try {
+                    await navigator.clipboard.writeText(text);
+                } catch (e) {
+                    // Repli pour les navigateurs sans API Clipboard (ou contexte non sécurisé)
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.setAttribute('readonly', '');
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    const copied = document.execCommand('copy');
+                    textarea.remove();
+                    if (!copied) {
+                        showToast('Impossible de copier la liste 😕');
+                        return;
+                    }
+                }
+                showToast('Liste de courses copiée ! 📋');
+            }
+
+            async function shareShoppingList() {
+                if (getTotalPeople() === 0) {
+                    showToast('Ajoutez au moins une personne 😉');
+                    return;
+                }
+
+                try {
+                    await navigator.share({
+                        title: `Liste de courses - ${getRecipeName(recipes[currentRecipe])}`,
+                        text: buildShoppingList()
+                    });
+                } catch (e) {
+                    // Partage annulé par l'utilisateur : rien à faire
+                    if (e.name !== 'AbortError') {
+                        copyShoppingList();
+                    }
+                }
+            }
+
+            let toastTimeout = null;
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            }
+
             // Fonction pour ouvrir le popup mobile
             function openMobilePopup() {
-                // Mettre à jour les valeurs dans le popup
-                popupPeopleCountEco.textContent = counts.eco;
-                popupPeopleCountNormal.textContent = counts.normal;
-                popupPeopleCountGourmand.textContent = counts.gourmand;
-                
-                // Mettre à jour la phrase humoristique
-                updateFunnyPhrases();
-                
+                renderCounts();
+
                 // Afficher le popup
                 mobilePopupOverlay.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
+
+                if (closePopup) {
+                    closePopup.focus();
+                }
             }
 
             // Fonction pour fermer le popup mobile
             function closeMobilePopup() {
                 mobilePopupOverlay.style.display = 'none';
                 document.body.style.overflow = '';
+
+                if (mobileTotal) {
+                    mobileTotal.focus();
+                }
             }
 
             // Fonction pour fermer le popup cookies
-            function closeCookiesPopup() {
+            function closeCookiesPopup(message) {
                 cookiesPopupOverlay.style.display = 'none';
-                document.body.style.overflow = '';
-                
+                showToast(message);
+
                 // Stocker le choix de l'utilisateur pour ne plus afficher le popup
-                localStorage.setItem('cookiesAccepted', 'true');
+                try {
+                    localStorage.setItem('cookiesAccepted', 'true');
+                } catch (e) {
+                    // Stockage indisponible : le bandeau réapparaîtra à la prochaine visite
+                }
             }
 
-// Fonction pour afficher le popup cookies
-function showCookiesPopup() {
-    // Vérifier si l'utilisateur a déjà fait un choix
-    if (!localStorage.getItem('cookiesAccepted')) {
-        // Afficher le popup après un court délai
-        setTimeout(() => {
-            cookiesPopupOverlay.style.display = "flex";
-            document.body.style.overflow = "hidden";
-        }, window.innerWidth <= 768 ? 1000 : 500); // Délai plus court sur desktop
-    }
-}
+            // Fonction pour afficher le popup cookies (bandeau non bloquant)
+            function showCookiesPopup() {
+                let alreadyAnswered = false;
+                try {
+                    alreadyAnswered = !!localStorage.getItem('cookiesAccepted');
+                } catch (e) {
+                    alreadyAnswered = false;
+                }
 
+                // Vérifier si l'utilisateur a déjà fait un choix
+                if (!alreadyAnswered) {
+                    // Afficher le popup après un court délai
+                    setTimeout(() => {
+                        cookiesPopupOverlay.style.display = 'flex';
+                    }, window.innerWidth <= 768 ? 1000 : 500); // Délai plus court sur desktop
+                }
+            }
 
             // Gestion du clic sur les options de recette
             const recipeOptions = document.querySelectorAll('.recipe-option');
             recipeOptions.forEach(option => {
                 option.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
-                    // Retire la classe active de toutes les options
-                    recipeOptions.forEach(opt => opt.classList.remove('active'));
-                    
-                    // Ajoute la classe active à l'option cliquée
-                    this.classList.add('active');
-                    
-                    // Change de recette
+
+                    // Change de recette et met à jour l'URL sans polluer l'historique
                     const recipeName = this.getAttribute('data-recipe');
                     setRecipe(recipeName);
-                    
+                    history.replaceState(null, '', `#${recipeName}`);
+
                     // Sur mobile, fermer le menu après sélection
                     if (window.innerWidth <= 768) {
                         closeMobileMenu();
                     }
                 });
             });
-            
-            // Gestion des compteurs de personnes
-            const counterButtons = document.querySelectorAll('.counter-btn');
+
+            // URL modifiée à la main (ou lien partagé ouvert dans un onglet existant)
+            window.addEventListener('hashchange', function() {
+                const recipeName = getRecipeFromHash();
+                if (recipeName && recipeName !== currentRecipe) {
+                    setRecipe(recipeName);
+                }
+            });
+
+            // Gestion des compteurs de personnes (page + popup mobile)
+            const counterButtons = document.querySelectorAll('.counter-btn, .popup-counter-btn');
             counterButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    const mode = this.getAttribute('data-mode');
-                    const isIncrease = this.classList.contains('increase');
-                    
-                    if (isIncrease && counts[mode] < 20) {
-                        updatePeopleCount(mode, counts[mode] + 1);
-                    } else if (!isIncrease && counts[mode] > 0) {
-                        updatePeopleCount(mode, counts[mode] - 1);
-                    }
+                    changePeopleCount(this.getAttribute('data-mode'), this.classList.contains('increase'));
                 });
             });
-            
+
             // Gestion du toggle de la sidebar sur PC
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const mainContainer = document.getElementById('main-container');
-            
+
             sidebarToggle.addEventListener('click', function() {
-                mainContainer.classList.toggle('sidebar-collapsed');
-                
-                // Changer l'icône selon l'état
-                const icon = this.querySelector('i');
-                if (mainContainer.classList.contains('sidebar-collapsed')) {
-                    icon.className = 'fi fi-rs-apps';
-                } else {
-                    icon.className = 'fi fi-rs-apps';
-                }
+                const isCollapsed = mainContainer.classList.toggle('sidebar-collapsed');
+                this.setAttribute('aria-expanded', String(!isCollapsed));
+                this.setAttribute('aria-label', isCollapsed ? 'Déplier le menu' : 'Réduire le menu');
             });
-            
+
             // Gestion du menu mobile
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const mobileOverlay = document.getElementById('mobile-overlay');
             const recipeSidebar = document.getElementById('recipe-sidebar');
-            
+
             function openMobileMenu() {
                 recipeSidebar.classList.add('mobile-open');
                 mobileOverlay.classList.add('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'true');
                 document.body.style.overflow = 'hidden';
             }
-            
+
             function closeMobileMenu() {
                 recipeSidebar.classList.remove('mobile-open');
                 mobileOverlay.classList.remove('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
                 document.body.style.overflow = '';
             }
-            
+
             mobileMenuToggle.addEventListener('click', openMobileMenu);
             mobileOverlay.addEventListener('click', closeMobileMenu);
-            
+
             // Gestion de la personnalisation
             const customizeToggle = document.getElementById('customize-toggle');
             customizeToggle.addEventListener('click', function() {
-                customizeControls.classList.toggle('show');
+                const isOpen = customizeControls.classList.toggle('show');
+                this.setAttribute('aria-expanded', String(isOpen));
             });
-            
+
             // Événements pour le popup mobile
             if (mobileTotal) {
                 mobileTotal.addEventListener('click', openMobilePopup);
+                mobileTotal.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openMobilePopup();
+                    }
+                });
             }
-            
+
             if (closePopup) {
                 closePopup.addEventListener('click', closeMobilePopup);
             }
-            
+
             // Fermer le popup en cliquant en dehors
             if (mobilePopupOverlay) {
                 mobilePopupOverlay.addEventListener('click', function(e) {
@@ -2410,75 +2885,48 @@ function showCookiesPopup() {
                 });
             }
 
-            // Gérer les boutons dans le popup
-            const popupCounterButtons = document.querySelectorAll('.popup-counter-btn');
-            popupCounterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const mode = this.getAttribute('data-mode');
-                    const isIncrease = this.classList.contains('increase');
-                    
-                    if (isIncrease && counts[mode] < 20) {
-                        updatePeopleCount(mode, counts[mode] + 1);
-                    } else if (!isIncrease && counts[mode] > 0) {
-                        updatePeopleCount(mode, counts[mode] - 1);
-                    }
-                });
+            // Touche Échap : fermer popup, menu et infobulles
+            document.addEventListener('keydown', function(e) {
+                if (e.key !== 'Escape') return;
+                if (mobilePopupOverlay.style.display === 'flex') {
+                    closeMobilePopup();
+                }
+                if (recipeSidebar.classList.contains('mobile-open')) {
+                    closeMobileMenu();
+                }
+                closeTooltips();
             });
+
+            // Fermer les infobulles ouvertes au toucher en cliquant ailleurs
+            document.addEventListener('click', closeTooltips);
 
             // Gestion des cookies
             if (acceptCookies) {
                 acceptCookies.addEventListener('click', function() {
-                    alert("🍪 Super ! On va se régaler avec ces cookies !");
-                    closeCookiesPopup();
+                    closeCookiesPopup("🍪 Super ! On va se régaler avec ces cookies !");
                 });
             }
 
             if (rejectCookies) {
                 rejectCookies.addEventListener('click', function() {
-                    alert("🧀 D'accord, on reste concentrés sur le fromage alors !");
-                    closeCookiesPopup();
+                    closeCookiesPopup("🧀 D'accord, on reste concentrés sur le fromage alors !");
                 });
             }
 
-            // Configurer le total mobile et desktop
-            function setupTotals() {
-                const totalPeopleElement = document.querySelector('.total-people');
-                if (totalPeopleElement && window.innerWidth <= 768) {
-                    totalPeopleElement.classList.add('mobile-total');
-                }
-                
-                // Afficher/masquer les totaux selon l'appareil
-                const desktopTotal = document.querySelector('.desktop-total');
-                const mobileTotal = document.querySelector('.mobile-total');
-                
-                if (window.innerWidth <= 768) {
-                    if (desktopTotal) desktopTotal.style.display = 'none';
-                    if (mobileTotal) mobileTotal.style.display = 'block';
-                } else {
-                    if (desktopTotal) desktopTotal.style.display = 'block';
-                    if (mobileTotal) mobileTotal.style.display = 'none';
-                }
+            // Liste de courses
+            copyListButton.addEventListener('click', copyShoppingList);
+            if (navigator.share) {
+                shareListButton.hidden = false;
+                shareListButton.addEventListener('click', shareShoppingList);
             }
 
-            // Initialisation
-            setRecipe('raclette');
-            updateQuantities();
-            
-            // Initialiser les compteurs
-            updatePeopleCount('eco', counts.eco);
-            updatePeopleCount('normal', counts.normal);
-            updatePeopleCount('gourmand', counts.gourmand);
-            
-            // Configurer les totaux
-            setupTotals();
-            
+            // Initialisation : réglages sauvegardés, puis recette de l'URL si présente
+            loadState();
+            renderCounts();
+            setRecipe(getRecipeFromHash() || currentRecipe);
+
             // Afficher le popup cookies
             showCookiesPopup();
-            
-            // Reconfigurer lors du redimensionnement
-            window.addEventListener('resize', function() {
-                setupTotals();
-            });
         });
     </script>
 </body>
