@@ -15,6 +15,7 @@ Indiquez le nombre de convives par appétit (😒 Éco, 😋 Normal, 🤤 Gourma
 - **Quantités personnalisables** par personne, avec retour aux valeurs recommandées
 - **Réglages mémorisés** dans le navigateur (localStorage, aucun cookie)
 - **Lien direct par recette** : `…/#fondue`, `…/#tartiflette`, `…/#croziflette`
+- **Style cartoon** : contours encrés, ombres franches, police arrondie (Fredoka / Nunito), bandeau qui coule comme du fromage fondu
 - Responsive (menu latéral sur PC, popup de saisie sur mobile), navigation au clavier, respect de `prefers-reduced-motion`
 
 ## Lancer en local
