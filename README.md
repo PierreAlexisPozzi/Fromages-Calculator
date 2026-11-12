@@ -14,6 +14,7 @@ Indiquez le nombre de convives par appétit (😒 Éco, 😋 Normal, 🤤 Gourma
 - **Liste de courses** à copier ou partager (WhatsApp, SMS... via le partage natif sur mobile)
 - **Quantités personnalisables** par personne, avec retour aux valeurs recommandées
 - **Réglages mémorisés** dans le navigateur (localStorage, aucun cookie)
+- **Fiches fromages comparatives** (raclette) : jauge de goût doux → corsé, arômes, prix indicatif, où acheter, conseil d'achat
 - **Lien direct par recette** : `…/#fondue`, `…/#tartiflette`, `…/#croziflette`
 - **Style cartoon** : contours encrés, ombres franches, police arrondie (Fredoka / Nunito), bandeau qui coule comme du fromage fondu
 - **Illustrations maison** (SVG, dossier `images/`) : ingrédients et recettes en personnages kawaii, drapeaux ronds lisibles sur tous les systèmes (les drapeaux emoji ne s'affichent pas sous Windows)
@@ -35,3 +36,4 @@ Ou ouvrez simplement `index.html` dans un navigateur.
 Dans `index.html`, ajoutez une entrée à l'objet `recipes` (titre, couleurs, ingrédients avec `baseValue` par personne en mode Normal, fromages, conseils), puis un lien `.recipe-option` avec le `data-recipe` correspondant dans le menu.
 Pour afficher une conversion en conditionnement, ajoutez `pack: { size, singular, plural }` à l'ingrédient.
 Chaque recette et chaque ingrédient référence son illustration via `image: "images/....svg"` ; les fromages conseillés indiquent leur pays via `country` (`fr`, `ch`, `it`, `nl`, `es`, `at` → `images/flag-xx.svg`).
+Pour afficher des **fiches comparatives** (comme pour la raclette), renseignez sur chaque fromage `origin`, `intensity` (1 très doux → 5 très corsé), `flavors`, `price` (1 € → 3 €€€), `where`, `tip`, et en option `label` (AOP / IGP) et `badge` ; sinon la carte simple avec `desc` est utilisée.

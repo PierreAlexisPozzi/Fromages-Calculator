@@ -839,6 +839,206 @@
             line-height: 1.4;
             color: #5C4E42;
         }
+        
+        .cheese-toggle-subtitle {
+            display: block;
+            margin-top: 0.15rem;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 700;
+            opacity: 0.75;
+        }
+        
+        /* Fiches comparatives (lecture rapide : alignées à gauche, non inclinées) */
+        .cheese-grid.detailed {
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem 1.25rem;
+            padding-top: 1.75rem;
+        }
+        
+        .cheese-legend {
+            max-width: 640px;
+            margin: 1.25rem auto 0;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            line-height: 1.9;
+            text-align: center;
+            color: var(--ink);
+            background: white;
+            border: 2px dashed var(--ink);
+            border-radius: 14px;
+        }
+        
+        .cheese-card.cheese-sheet {
+            position: relative;
+            align-items: stretch;
+            text-align: left;
+            padding: 1.1rem 1.1rem 1rem;
+            transform: none;
+        }
+        
+        .cheese-card.cheese-sheet:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        .cheese-badge {
+            position: absolute;
+            top: -14px;
+            right: 12px;
+            padding: 0.15rem 0.65rem;
+            font-family: var(--font-display);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--ink);
+            background: var(--secondary);
+            border: 2px solid var(--ink);
+            border-radius: 999px;
+            box-shadow: 2px 2px 0 var(--ink);
+            transform: rotate(3deg);
+        }
+        
+        .cheese-head {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 2px dashed rgba(43, 29, 20, 0.2);
+        }
+        
+        .cheese-flag {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+        }
+        
+        .cheese-titles {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .cheese-sheet .cheese-name {
+            justify-content: flex-start;
+            margin: 0;
+            font-size: 1.15rem;
+            line-height: 1.15;
+        }
+        
+        .cheese-region {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #7A6A5C;
+        }
+        
+        .cheese-label {
+            flex-shrink: 0;
+            align-self: flex-start;
+            padding: 0.1rem 0.45rem;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: white;
+            background: var(--dark);
+            border-radius: 6px;
+            cursor: help;
+        }
+        
+        .cheese-facts {
+            display: grid;
+            gap: 0.45rem;
+            margin: 0;
+        }
+        
+        .cheese-fact {
+            display: grid;
+            grid-template-columns: 4.2rem 1fr;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .cheese-fact dt {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #7A6A5C;
+        }
+        
+        .cheese-fact dd {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.35rem;
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--ink);
+        }
+        
+        .intensity-meter {
+            display: inline-flex;
+            gap: 3px;
+            vertical-align: middle;
+        }
+        
+        .intensity-meter .dot {
+            width: 12px;
+            height: 12px;
+            background: transparent;
+            border: 2px solid rgba(43, 29, 20, 0.25);
+            border-radius: 50%;
+        }
+        
+        .intensity-meter .dot.on {
+            background: var(--primary);
+            border-color: var(--ink);
+        }
+        
+        .intensity-word {
+            font-size: 0.85rem;
+        }
+        
+        .flavor-tag {
+            padding: 0.05rem 0.55rem;
+            font-size: 0.8rem;
+            background: var(--light);
+            border: 1.5px solid var(--ink);
+            border-radius: 999px;
+        }
+        
+        .price-tag {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--ink);
+        }
+        
+        .price-tag .off {
+            opacity: 0.2;
+        }
+        
+        .cheese-legend .intensity-meter .dot {
+            width: 10px;
+            height: 10px;
+        }
+        
+        .cheese-legend .price-tag {
+            font-size: 0.9rem;
+        }
+        
+        .cheese-tip {
+            margin-top: 0.8rem;
+            padding: 0.55rem 0.7rem;
+            font-size: 0.84rem;
+            line-height: 1.4;
+            color: var(--ink);
+            background: var(--paper);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+        }
 
         .tips-section {
             padding: 1.5rem 2rem 2.5rem;
@@ -1839,36 +2039,88 @@
                     ],
                     cheeseSection: {
                         title: "🧀 La vache! Je m'en fais tout un fromage! 🧀",
+                        subtitle: "goût, prix et où les acheter",
+                        // Fiches comparatives : intensity de 1 (très doux) à 5 (très corsé), price de 1 (€) à 3 (€€€)
                         cheeses: [
                             {
                                 country: "ch",
-                                name: "Raclette Valaisanne",
-                                desc: "Suisse - Valais. Le classique suisse à pâte demi-dure, crémeux et fruité, parfait pour fondre"
+                                name: "Raclette du Valais",
+                                origin: "Suisse · Valais",
+                                label: "AOP",
+                                badge: "Le classique",
+                                intensity: 3,
+                                flavors: ["Fruité", "Crémeux"],
+                                price: 3,
+                                where: "Fromager",
+                                tip: "La raclette historique, au lait cru. Idéale à la demi-meule avec l'appareil traditionnel."
+                            },
+                            {
+                                country: "fr",
+                                name: "Raclette de Savoie",
+                                origin: "France · Savoie",
+                                label: "IGP",
+                                badge: "Facile à trouver",
+                                intensity: 2,
+                                flavors: ["Lactique", "Fondant"],
+                                price: 2,
+                                where: "Supermarché, fromager",
+                                tip: "La référence en France, vendue en tranches prêtes à l'emploi. Vérifiez le logo IGP sur l'emballage."
+                            },
+                            {
+                                country: "nl",
+                                name: "Gouda mi-vieux",
+                                origin: "Pays-Bas",
+                                badge: "Petit budget",
+                                intensity: 2,
+                                flavors: ["Beurré", "Légèrement sucré"],
+                                price: 1,
+                                where: "Supermarché",
+                                tip: "Prenez-le jeune ou mi-vieux : très affiné, il devient sec et fond mal."
                             },
                             {
                                 country: "it",
                                 name: "Fontina",
-                                desc: "Italie - Vallée d'Aoste. Fromage à pâte semi-cuite, doux et noisetté, fondant exceptionnel"
+                                origin: "Italie · Vallée d'Aoste",
+                                label: "AOP",
+                                intensity: 2,
+                                flavors: ["Noisette", "Fondant"],
+                                price: 3,
+                                where: "Fromager, épicerie italienne",
+                                tip: "Au lait cru et très fondante : parfaite pour les convives qui préfèrent les goûts doux."
                             },
                             {
                                 country: "fr",
                                 name: "Morbier",
-                                desc: "France - Franche-Comté. Reconnaissable à sa ligne de cendre, fondant et légèrement fruité"
-                            },
-                            {
-                                country: "nl",
-                                name: "Gouda affiné",
-                                desc: "Pays-Bas - Hollande. Version affinée du célèbre fromage hollandais, caramélisé et fondant"
+                                origin: "France · Franche-Comté",
+                                label: "AOP",
+                                intensity: 2,
+                                flavors: ["Lactique", "Fruité"],
+                                price: 2,
+                                where: "Supermarché, fromager",
+                                tip: "Reconnaissable à sa raie noire de charbon végétal, qui se mange. Fond très bien."
                             },
                             {
                                 country: "es",
                                 name: "Mahón",
-                                desc: "Espagne - Minorque. Fromage au lait de vache, légèrement salé et acidulé, fond crémeux"
+                                origin: "Espagne · Minorque",
+                                label: "AOP",
+                                badge: "Pour changer",
+                                intensity: 3,
+                                flavors: ["Légèrement salé", "Acidulé"],
+                                price: 2,
+                                where: "Épicerie fine",
+                                tip: "Choisissez-le « semicurado » (demi-affiné) : plus vieux, il devient sec et fond moins bien."
                             },
                             {
                                 country: "at",
                                 name: "Bergkäse",
-                                desc: "Autriche - Tyrol. 'Fromage de montagne' alpin, aromatique et excellent pour la fonte"
+                                origin: "Autriche · Vorarlberg, Tyrol",
+                                badge: "Le plus corsé",
+                                intensity: 4,
+                                flavors: ["Aromatique", "Noisette"],
+                                price: 3,
+                                where: "Fromager",
+                                tip: "Pour les amateurs de caractère ; à mélanger avec un fromage plus doux si la tablée est partagée."
                             }
                         ]
                     },
@@ -2756,7 +3008,15 @@
                 cheeseToggle.setAttribute('aria-controls', 'cheese-content');
 
                 const toggleText = document.createElement('span');
+                toggleText.className = 'cheese-toggle-text';
                 toggleText.textContent = recipe.cheeseSection.title;
+                
+                if (recipe.cheeseSection.subtitle) {
+                    const toggleSubtitle = document.createElement('span');
+                    toggleSubtitle.className = 'cheese-toggle-subtitle';
+                    toggleSubtitle.textContent = `${recipe.cheeseSection.cheeses.length} fromages comparés : ${recipe.cheeseSection.subtitle}`;
+                    toggleText.appendChild(toggleSubtitle);
+                }
 
                 const toggleIcon = document.createElement('span');
                 toggleIcon.className = 'icon';
@@ -2772,9 +3032,21 @@
 
                 const cheeseGrid = document.createElement('div');
                 cheeseGrid.className = 'cheese-grid';
+                
+                // Fiches comparatives (goût, prix, où acheter) quand les données existent
+                const isDetailed = recipe.cheeseSection.cheeses.every(cheese => cheese.intensity);
+                if (isDetailed) {
+                    cheeseGrid.classList.add('detailed');
+                    cheeseContent.appendChild(createCheeseLegend());
+                }
 
                 // Créer les cartes de fromages
                 recipe.cheeseSection.cheeses.forEach(cheese => {
+                    if (isDetailed) {
+                        cheeseGrid.appendChild(createCheeseSheet(cheese));
+                        return;
+                    }
+                    
                     const cheeseCard = document.createElement('div');
                     cheeseCard.className = 'cheese-card';
 
@@ -2815,6 +3087,122 @@
                 });
             }
 
+            const intensityLabels = ['Très doux', 'Doux', 'Moyen', 'Corsé', 'Très corsé'];
+            const priceLabels = ['abordable', 'moyen', 'élevé'];
+            
+            // Jauge de 5 points pour l'intensité du goût
+            function createIntensityMeter(intensity) {
+                const meter = document.createElement('span');
+                meter.className = 'intensity-meter';
+                meter.setAttribute('role', 'img');
+                meter.setAttribute('aria-label', `Intensité ${intensity} sur 5`);
+                for (let i = 1; i <= 5; i++) {
+                    const dot = document.createElement('span');
+                    dot.className = i <= intensity ? 'dot on' : 'dot';
+                    meter.appendChild(dot);
+                }
+                return meter;
+            }
+            
+            // Prix relatif : € à €€€, les symboles non atteints sont estompés
+            function createPriceTag(price) {
+                const tag = document.createElement('span');
+                tag.className = 'price-tag';
+                tag.setAttribute('role', 'img');
+                tag.setAttribute('aria-label', `Prix ${priceLabels[price - 1]}`);
+                for (let i = 1; i <= 3; i++) {
+                    const euro = document.createElement('span');
+                    euro.textContent = '€';
+                    if (i > price) euro.className = 'off';
+                    tag.appendChild(euro);
+                }
+                return tag;
+            }
+            
+            function createFactRow(label, ...content) {
+                const row = document.createElement('div');
+                row.className = 'cheese-fact';
+                const dt = document.createElement('dt');
+                dt.textContent = label;
+                const dd = document.createElement('dd');
+                content.forEach(item => dd.append(item));
+                row.appendChild(dt);
+                row.appendChild(dd);
+                return row;
+            }
+            
+            function createCheeseLegend() {
+                const legend = document.createElement('p');
+                legend.className = 'cheese-legend';
+                legend.append('Goût : ', createIntensityMeter(1), ' très doux → ', createIntensityMeter(5),
+                    ' très corsé · Prix indicatif : ', createPriceTag(1), ' abordable → ', createPriceTag(3), ' élevé');
+                return legend;
+            }
+            
+            function createCheeseSheet(cheese) {
+                const card = document.createElement('article');
+                card.className = 'cheese-card cheese-sheet';
+                
+                if (cheese.badge) {
+                    const badge = document.createElement('span');
+                    badge.className = 'cheese-badge';
+                    badge.textContent = cheese.badge;
+                    card.appendChild(badge);
+                }
+                
+                const head = document.createElement('div');
+                head.className = 'cheese-head';
+                
+                const titles = document.createElement('div');
+                titles.className = 'cheese-titles';
+                const name = document.createElement('h4');
+                name.className = 'cheese-name';
+                name.textContent = cheese.name;
+                const origin = document.createElement('div');
+                origin.className = 'cheese-region';
+                origin.textContent = cheese.origin;
+                titles.appendChild(name);
+                titles.appendChild(origin);
+                
+                head.appendChild(createIllustration(`images/flag-${cheese.country}.svg`, 'cheese-flag', 40));
+                head.appendChild(titles);
+                
+                if (cheese.label) {
+                    const label = document.createElement('span');
+                    label.className = 'cheese-label';
+                    label.textContent = cheese.label;
+                    label.title = cheese.label === 'AOP' ? 'Appellation d\'origine protégée' : 'Indication géographique protégée';
+                    head.appendChild(label);
+                }
+                
+                const facts = document.createElement('dl');
+                facts.className = 'cheese-facts';
+                
+                const intensityWord = document.createElement('span');
+                intensityWord.className = 'intensity-word';
+                intensityWord.textContent = intensityLabels[cheese.intensity - 1];
+                facts.appendChild(createFactRow('Goût', createIntensityMeter(cheese.intensity), intensityWord));
+                
+                const flavors = cheese.flavors.map(flavor => {
+                    const tag = document.createElement('span');
+                    tag.className = 'flavor-tag';
+                    tag.textContent = flavor;
+                    return tag;
+                });
+                facts.appendChild(createFactRow('Arômes', ...flavors));
+                facts.appendChild(createFactRow('Prix', createPriceTag(cheese.price)));
+                facts.appendChild(createFactRow('Où', cheese.where));
+                
+                const tip = document.createElement('p');
+                tip.className = 'cheese-tip';
+                tip.textContent = cheese.tip;
+                
+                card.appendChild(head);
+                card.appendChild(facts);
+                card.appendChild(tip);
+                return card;
+            }
+            
             function createTipsSection() {
                 // Vider la section des conseils
                 tipsSection.innerHTML = '';
